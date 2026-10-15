@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>מיצי והפרפר</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff8ec;--ink:#3a2e2a;--ok:#2a9d5c;--accent:#f4a259;--warn:#e56b6f}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+html,body{margin:0;height:100%;background:var(--bg);font-family:Rubik,Arial,sans-serif;color:var(--ink);overflow:hidden}
+#app{height:100%;display:flex;flex-direction:column;align-items:center;padding:16px;gap:10px}
+.top{width:100%;max-width:900px;display:flex;justify-content:space-between;align-items:center;font-size:18px;font-weight:600}
+.stage{width:100%;max-width:900px;flex:1 1 auto;min-height:0;background:#fff;border-radius:28px;box-shadow:0 6px 24px rgba(0,0,0,.08);overflow:hidden;position:relative}
+.stage svg{width:100%;height:100%;display:block}
+/* לפני הקריאה: ציור עיפרון אפור וקפוא. אחרי: צבע ותנועה */
+.scene{filter:grayscale(1) contrast(1.15) brightness(1.08);transition:filter 1.2s ease}
+.alive .scene{filter:none}
+.stage:not(.alive) *{animation-play-state:paused !important}
+.text{max-width:900px;width:100%;font-size:clamp(28px,4.6vw,48px);line-height:1.9;text-align:center;font-weight:600;min-height:2em}
+.w{display:inline-block;padding:0 .12em;border-radius:12px;transition:color .3s,background .3s;cursor:pointer}
+.w.next{background:#fff1c9}
+.w.ok{color:var(--ok);background:transparent}
+.controls{display:flex;gap:22px;align-items:center}
+button{font-family:inherit;cursor:pointer}
+.mic{width:92px;height:92px;border-radius:50%;border:none;background:var(--accent);color:#fff;font-size:42px;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.mic.on{background:var(--warn);animation:pulse 1.2s infinite}
+.mic[disabled]{opacity:.35}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(229,107,111,.6)}100%{box-shadow:0 0 0 26px rgba(229,107,111,0)}}
+.nav{width:66px;height:66px;border-radius:50%;border:none;background:#fff;font-size:32px;box-shadow:0 3px 10px rgba(0,0,0,.12);color:var(--ink)}
+.nav[disabled]{opacity:.2}
+.nav.glow{background:var(--ok);color:#fff;animation:nudge 1s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(-8px) scale(1.08)}}
+.status{min-height:1.5em;font-size:19px;opacity:.75;text-align:center}
+.skip{position:fixed;bottom:8px;left:10px;background:none;border:none;opacity:.25;font-size:14px;color:var(--ink)}
+.confetti{position:absolute;top:-40px;font-size:34px;pointer-events:none;animation:fall 2.4s ease-in forwards}
+@keyframes fall{to{transform:translateY(120vh) rotate(540deg)}}
+
+/* ---- אנימציות הדמויות ---- */
+.cat-inner{transform-box:fill-box;transform-origin:center bottom}
+.tail{transform-box:fill-box;transform-origin:0% 100%;animation:wag 1.6s ease-in-out infinite}
+.eyes{transform-box:fill-box;transform-origin:center;animation:blink 3.5s infinite}
+@keyframes wag{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(20deg)}}
+@keyframes blink{0%,90%,100%{transform:scaleY(1)}94%{transform:scaleY(.1)}}
+@keyframes jump{0%,100%{transform:translateY(0) scale(1,1)}15%{transform:translateY(0) scale(1.1,.88)}50%{transform:translateY(-70px) scale(.95,1.06)}85%{transform:translateY(0) scale(1.08,.92)}}
+@keyframes hop{0%,100%{transform:translateY(0)}50%{transform:translateY(-40px)}}
+@keyframes spin{0%{transform:translateY(0) rotate(0)}50%{transform:translateY(-80px) rotate(180deg)}100%{transform:translateY(0) rotate(360deg)}}
+.alive .p1 .cat-inner{animation:jump .8s ease-in-out .3s 3}
+.alive .p2 .cat-inner{animation:hop .5s ease-in-out .8s 4}
+.p3 .cat-inner,.p4 .cat-inner{transform-origin:center}
+.alive .p3 .cat-inner{animation:spin 1.3s ease-in-out .3s 2}
+.alive .p4 .cat-inner{animation:jump .8s ease-in-out infinite}
+
+.wing{transform-box:fill-box;animation:flap .22s ease-in-out infinite alternate}
+.wl{transform-origin:right center}.wr{transform-origin:left center}
+@keyframes flap{to{transform:scaleX(.25)}}
+.alive .p2 .butterfly-move{animation:fly 4.5s ease-in-out .2s forwards}
+@keyframes fly{0%{transform:translate(0,0)}25%{transform:translate(-70px,-40px)}55%{transform:translate(30px,-110px)}100%{transform:translate(-150px,-240px)}}
+
+.sun{transform-box:fill-box;transform-origin:center}
+.alive .sun{animation:sunspin 8s linear infinite}
+@keyframes sunspin{to{transform:rotate(360deg)}}
+.star{transform-box:fill-box;transform-origin:center;opacity:0}
+.alive .star{animation:pop 1.4s ease-out forwards, twinkle 1.2s ease-in-out 1.4s infinite}
+@keyframes pop{0%{opacity:0;transform:scale(0)}60%{opacity:1;transform:scale(1.4)}100%{opacity:1;transform:scale(1)}}
+@keyframes twinkle{50%{transform:scale(.7)}}
+.flower{transform-box:fill-box;transform-origin:center bottom;animation:sway 2s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="top"><span id="title">מיצי והפרפר</span><span id="pageNum"></span></div>
+  <div class="stage" id="stage"></div>
+  <div class="text" id="text"></div>
+  <div class="status" id="status"></div>
+  <div class="controls">
+    <button class="nav" id="prev" aria-label="הדף הקודם">→</button>
+    <button class="mic" id="mic" aria-label="להתחיל להקשיב">🎤</button>
+    <button class="nav" id="next" aria-label="הדף הבא">←</button>
+  </div>
+</div>
+<button class="skip" id="skip">דילוג (להורים)</button>
+
+<script>
+/* =========================================================
+   1. תוכן הספר — כאן משנים טקסט ודפים
+   ========================================================= */
+const PAGES = [
+  { text: 'זֹאת מִיצִי. מִיצִי הִיא חֲתוּלָה קְטַנָּה.', scene: 'p1' },
+  { text: 'מִיצִי רוֹאָה פַּרְפַּר. הַפַּרְפַּר עָף גָּבוֹהַּ.', scene: 'p2' },
+  { text: 'מִיצִי קוֹפֶצֶת וְצוֹחֶקֶת. אֵיזֶה יוֹם יָפֶה!', scene: 'p3' },
+  { text: 'כָּל הַכָּבוֹד! סִיַּמְתָּ אֶת הַסֵּפֶר!', scene: 'p4', end: true }
+];
+
+/* =========================================================
+   2. ציורים (SVG)
+   ========================================================= */
+function cat(x, y, s = 1) {
+  return `<g transform="translate(${x},${y}) scale(${s})"><g class="cat-inner">
+    <path class="tail" d="M40 30 Q95 10 82 -45" stroke="#f4a259" stroke-width="13" fill="none" stroke-linecap="round"/>
+    <ellipse cx="0" cy="22" rx="50" ry="38" fill="#f4a259"/>
+    <ellipse cx="0" cy="32" rx="28" ry="22" fill="#ffe1c2"/>
+    <ellipse cx="-24" cy="58" rx="13" ry="8" fill="#e8913f"/>
+    <ellipse cx="24" cy="58" rx="13" ry="8" fill="#e8913f"/>
+    <polygon points="-38,-52 -32,-96 -6,-64" fill="#f4a259"/>
+    <polygon points="38,-52 32,-96 6,-64" fill="#f4a259"/>
+    <polygon points="-30,-60 -28,-84 -14,-66" fill="#ffb4a2"/>
+    <polygon points="30,-60 28,-84 14,-66" fill="#ffb4a2"/>
+    <circle cx="0" cy="-42" r="40" fill="#f4a259"/>
+    <g class="eyes"><ellipse cx="-15" cy="-48" rx="6" ry="8" fill="#333"/><ellipse cx="15" cy="-48" rx="6" ry="8" fill="#333"/>
+      <circle cx="-13" cy="-51" r="2" fill="#fff"/><circle cx="17" cy="-51" r="2" fill="#fff"/></g>
+    <circle cx="-26" cy="-32" r="6" fill="#ffb4a2" opacity=".7"/><circle cx="26" cy="-32" r="6" fill="#ffb4a2" opacity=".7"/>
+    <polygon points="-5,-35 5,-35 0,-29" fill="#e56b6f"/>
+    <path d="M-9 -25 Q-4 -19 0 -26 Q4 -19 9 -25" stroke="#333" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    <g stroke="#333" stroke-width="1.6" stroke-linecap="round"><line x1="-18" y1="-30" x2="-44" y2="-34"/><line x1="-18" y1="-26" x2="-44" y2="-22"/>
+      <line x1="18" y1="-30" x2="44" y2="-34"/><line x1="18" y1="-26" x2="44" y2="-22"/></g>
+  </g></g>`;
+}
+function sun(x, y) {
+  let rays = '';
+  for (let i = 0; i < 8; i++) {
+    const a = i * Math.PI / 4;
+    rays += `<line x1="${x + Math.cos(a) * 36}" y1="${y + Math.sin(a) * 36}" x2="${x + Math.cos(a) * 50}" y2="${y + Math.sin(a) * 50}" stroke="#ffb703" stroke-width="5" stroke-linecap="round"/>`;
+  }
+  return `<g class="sun">${rays}<circle cx="${x}" cy="${y}" r="28" fill="#ffd166"/></g>`;
+}
+function flower(x, y, c) {
+  return `<g class="flower"><line x1="${x}" y1="${y}" x2="${x}" y2="${y - 26}" stroke="#2d6a4f" stroke-width="3"/>
+    <circle cx="${x}" cy="${y - 30}" r="8" fill="${c}"/><circle cx="${x}" cy="${y - 30}" r="3" fill="#ffd166"/></g>`;
+}
+function star(x, y, r, delay) {
+  let pts = '';
+  for (let i = 0; i < 10; i++) {
+    const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * .45 : r;
+    pts += `${(x + Math.cos(a) * rr).toFixed(1)},${(y + Math.sin(a) * rr).toFixed(1)} `;
+  }
+  return `<polygon class="star" style="animation-delay:${delay}s,${delay + 1.4}s" points="${pts}" fill="#ffd166" stroke="#f4a259" stroke-width="1.5"/>`;
+}
+function butterfly(x, y) {
+  return `<g transform="translate(${x},${y})"><g class="butterfly-move">
+    <g class="wing wl"><ellipse cx="-11" cy="-4" rx="12" ry="16" fill="#cdb4db"/><ellipse cx="-9" cy="10" rx="7" ry="8" fill="#b8a1cc"/></g>
+    <g class="wing wr"><ellipse cx="11" cy="-4" rx="12" ry="16" fill="#ffafcc"/><ellipse cx="9" cy="10" rx="7" ry="8" fill="#f497b6"/></g>
+    <rect x="-2.5" y="-14" width="5" height="26" rx="2.5" fill="#5a4a42"/>
+  </g></g>`;
+}
+function ground() {
+  return `<rect width="400" height="300" fill="#bde0fe"/>
+    <ellipse cx="300" cy="55" rx="40" ry="14" fill="#fff" opacity=".9"/><ellipse cx="325" cy="48" rx="26" ry="12" fill="#fff" opacity=".9"/>
+    <rect y="235" width="400" height="65" fill="#95d5b2"/>
+    ${flower(40, 270, '#ff8fab')}${flower(340, 275, '#a2d2ff')}${flower(370, 262, '#ffc8dd')}`;
+}
+const SCENES = {
+  p1: () => `${ground()}${sun(60, 60)}${cat(200, 175)}`,
+  p2: () => `${ground()}${sun(60, 60)}${cat(160, 175)}${butterfly(280, 150)}`,
+  p3: () => `${ground()}${sun(60, 60)}${cat(200, 175)}${star(90, 140, 14, .2)}${star(320, 120, 18, .5)}${star(260, 60, 12, .8)}${star(130, 70, 10, 1.1)}`,
+  p4: () => `${ground()}${sun(60, 60)}${cat(200, 175)}${star(80, 130, 16, .1)}${star(330, 130, 16, .3)}${star(200, 40, 14, .5)}`
+};
+
+/* =========================================================
+   3. השוואת מילים — מסלקת ניקוד ומאפשרת טעויות קטנות
+   ========================================================= */
+const FINALS = { 'ך': 'כ', 'ם': 'מ', 'ן': 'נ', 'ף': 'פ', 'ץ': 'צ' };
+function norm(s) {
+  return s.replace(/[\u0591-\u05C7]/g, '')          // ניקוד וטעמים
+          .replace(/[ךםןףץ]/g, c => FINALS[c])       // אותיות סופיות
+          .replace(/[^\u05D0-\u05EA\s]/g, ' ')        // סימני פיסוק
+          .trim().split(/\s+/).filter(Boolean);
+}
+const loose = w => w.replace(/[וי]/g, '');             // כתיב מלא/חסר
+function lev(a, b) {
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++)
+    for (let j = 1; j <= b.length; j++)
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+  return d[a.length][b.length];
+}
+function similar(heard, target) {
+  if (heard === target) return true;
+  const a = loose(heard), b = loose(target);
+  if (a && a === b) return true;
+  const L = Math.max(heard.length, target.length);
+  if (L >= 4 && lev(heard, target) <= 1) return true;
+  if (L >= 6 && lev(heard, target) <= 2) return true;
+  return false;
+}
+// מיישר את מה שנשמע מול הטקסט, לפי הסדר. מותר לדלג על עד 2 מילים.
+function align(heardWords, target) {
+  let p = 0; const matched = new Set();
+  for (const h of heardWords) {
+    for (let k = 0; k < 3 && p + k < target.length; k++) {
+      if (similar(h, target[p + k])) { matched.add(p + k); p = p + k + 1; break; }
+    }
+  }
+  return { p, matched };
+}
+const PASS_RATIO = 0.75; // כמה מהמילים חייבות להיקרא נכון
+
+/* =========================================================
+   4. זיהוי קולי
+   ========================================================= */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null, listening = false, finalText = '', done = false;
+let page = 0, target = [], spans = [];
+
+const $ = id => document.getElementById(id);
+const stage = $('stage'), textEl = $('text'), micBtn = $('mic'), statusEl = $('status');
+
+function setStatus(t) { statusEl.textContent = t; }
+function updateMic() {
+  micBtn.classList.toggle('on', listening);
+  micBtn.textContent = listening ? '👂' : '🎤';
+}
+
+function startListening() {
+  if (!SR || done) return;
+  if (!rec) {
+    rec = new SR();
+    rec.lang = 'he-IL';
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.onresult = e => {
+      let interim = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const r = e.results[i];
+        if (r.isFinal) finalText += ' ' + r[0].transcript;
+        else interim += ' ' + r[0].transcript;
+      }
+      check(finalText + ' ' + interim);
+    };
+    rec.onerror = e => {
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+        listening = false; updateMic();
+        setStatus('צריך לאשר גישה למיקרופון בהגדרות של ספארי');
+      }
+    };
+    rec.onend = () => {             // באייפד ההקשבה נעצרת לבד מדי פעם — מפעילים מחדש
+      if (listening && !done) setTimeout(() => { try { rec.start(); } catch (_) {} }, 200);
+      else updateMic();
+    };
+  }
+  try { rec.start(); } catch (_) {}
+  listening = true; updateMic();
+  setStatus('אני מקשיב... קראו בקול 📖');
+}
+function stopListening() {
+  listening = false; updateMic();
+  try { rec && rec.stop(); } catch (_) {}
+}
+
+function check(heard) {
+  if (done) return;
+  const { p, matched } = align(norm(heard), target);
+  spans.forEach((s, i) => {
+    s.classList.toggle('ok', matched.has(i));
+    s.classList.toggle('next', i === p);
+  });
+  if (p === target.length && matched.size >= Math.ceil(target.length * PASS_RATIO)) success();
+}
+
+/* =========================================================
+   5. הצלחה — הציור מתעורר
+   ========================================================= */
+function success() {
+  if (done) return;
+  done = true;
+  stopListening();
+  spans.forEach(s => { s.classList.add('ok'); s.classList.remove('next'); });
+  stage.classList.add('alive');
+  setStatus('כל הכבוד! 🎉');
+  chime(); confetti();
+  micBtn.disabled = true;
+  const nx = $('next');
+  nx.disabled = page >= PAGES.length - 1;
+  nx.classList.toggle('glow', !nx.disabled);
+}
+function chime() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [523, 659, 784, 1047].forEach((f, i) => {
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.frequency.value = f; o.type = 'triangle';
+      g.gain.setValueAtTime(.0001, ctx.currentTime + i * .12);
+      g.gain.exponentialRampToValueAtTime(.25, ctx.currentTime + i * .12 + .02);
+      g.gain.exponentialRampToValueAtTime(.0001, ctx.currentTime + i * .12 + .4);
+      o.connect(g).connect(ctx.destination);
+      o.start(ctx.currentTime + i * .12); o.stop(ctx.currentTime + i * .12 + .45);
+    });
+  } catch (_) {}
+}
+function confetti() {
+  const items = ['⭐', '🌟', '✨', '🎈', '💛'];
+  for (let i = 0; i < 18; i++) {
+    const d = document.createElement('div');
+    d.className = 'confetti';
+    d.textContent = items[i % items.length];
+    d.style.left = Math.random() * 95 + '%';
+    d.style.animationDelay = Math.random() * .8 + 's';
+    stage.appendChild(d);
+    setTimeout(() => d.remove(), 3500);
+  }
+}
+
+/* =========================================================
+   6. החלפת דפים
+   ========================================================= */
+function render() {
+  const pg = PAGES[page];
+  done = false; finalText = '';
+  stage.classList.remove('alive');
+  stage.innerHTML = `<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice"><g class="scene ${pg.scene}">${SCENES[pg.scene]()}</g></svg>`;
+  const tokens = pg.text.split(/\s+/);
+  textEl.innerHTML = '';
+  spans = []; target = [];
+  tokens.forEach((t, i) => {
+    const s = document.createElement('span');
+    s.className = 'w' + (i === 0 ? ' next' : '');
+    s.textContent = t;
+    s.onclick = () => sayWord(t);
+    textEl.appendChild(s); textEl.append(' ');
+    spans.push(s); target.push(norm(t)[0] || '');
+  });
+  $('pageNum').textContent = `${page + 1} / ${PAGES.length}`;
+  $('prev').disabled = page === 0;
+  const nx = $('next'); nx.disabled = true; nx.classList.remove('glow');
+  micBtn.disabled = false;
+  if (pg.end) {                       // דף הסיום מתעורר לבד
+    textEl.innerHTML = '';
+    spans = [];
+    textEl.textContent = pg.text;
+    micBtn.disabled = true;
+    stage.classList.add('alive');
+    setStatus('');
+    setTimeout(() => { chime(); confetti(); }, 300);
+    nx.disabled = false; nx.textContent = '↺'; nx.setAttribute('aria-label', 'לקרוא שוב');
+  } else {
+    nx.textContent = '←'; nx.setAttribute('aria-label', 'הדף הבא');
+    setStatus(SR ? 'לחצו על המיקרופון והתחילו לקרוא' : 'הדפדפן הזה לא תומך בזיהוי קולי. פתחו בספארי באייפד.');
+  }
+}
+
+// לחיצה על מילה — האייפד מקריא אותה (עוזר לילד שנתקע)
+function sayWord(w) {
+  if (!('speechSynthesis' in window)) return;
+  const wasListening = listening;
+  if (wasListening) stopListening();     // שהמיקרופון לא "ישמע" את ההקראה
+  const u = new SpeechSynthesisUtterance(w);
+  u.lang = 'he-IL'; u.rate = .8;
+  u.onend = () => { if (wasListening && !done) startListening(); };
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
+
+micBtn.onclick = () => listening ? stopListening() : startListening();
+$('next').onclick = () => {
+  stopListening();
+  if (PAGES[page].end) page = 0; else if (page < PAGES.length - 1) page++;
+  render();
+};
+$('prev').onclick = () => { stopListening(); if (page > 0) { page--; render(); } };
+$('skip').onclick = () => { if (!PAGES[page].end) success(); };
+
+render();
+</script>
+</body>
+</html>
