@@ -3,14 +3,34 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>מיצי והפרפר</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>ספר חי</title>
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#fff8ec;--ink:#3a2e2a;--ok:#2a9d5c;--accent:#f4a259;--warn:#e56b6f}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
 html,body{margin:0;height:100%;background:var(--bg);font-family:Rubik,Arial,sans-serif;color:var(--ink);overflow:hidden}
-#app{height:100%;display:flex;flex-direction:column;align-items:center;padding:16px;gap:10px}
-.top{width:100%;max-width:900px;display:flex;justify-content:space-between;align-items:center;font-size:18px;font-weight:600}
+button{font-family:inherit;cursor:pointer}
+.hidden{display:none !important}
+
+/* ---- מסך הספרייה ---- */
+#library{height:100%;overflow-y:auto;padding:28px 20px 40px}
+#library h1{text-align:center;font-size:clamp(34px,6vw,56px);margin:0 0 6px;font-weight:800}
+#library .sub{text-align:center;font-size:20px;opacity:.65;margin-bottom:28px}
+.shelf{max-width:960px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:24px}
+.book{background:#fff;border:none;border-radius:24px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.09);padding:0;text-align:center;color:var(--ink);transition:transform .2s;position:relative}
+.book:active{transform:scale(.96)}
+.book .cover{aspect-ratio:4/3;display:block;width:100%}
+.book .cover svg{width:100%;height:100%;display:block}
+.book .name{display:block;font-size:26px;font-weight:800;padding:14px 10px 4px}
+.book .meta{display:block;font-size:16px;opacity:.6;padding-bottom:16px}
+.book .done{position:absolute;top:10px;left:10px;background:#fff;border-radius:20px;padding:4px 10px;font-size:16px;font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+
+/* ---- מסך הקריאה ---- */
+#reader{height:100%;display:flex;flex-direction:column;align-items:center;padding:16px;gap:10px}
+.top{width:100%;max-width:900px;display:flex;justify-content:space-between;align-items:center;font-size:20px;font-weight:600;gap:12px}
+.home{width:52px;height:52px;border-radius:50%;border:none;background:#fff;font-size:26px;box-shadow:0 3px 10px rgba(0,0,0,.1)}
+#title{flex:1;text-align:center}
 .stage{width:100%;max-width:900px;flex:1 1 auto;min-height:0;background:#fff;border-radius:28px;box-shadow:0 6px 24px rgba(0,0,0,.08);overflow:hidden;position:relative}
 .stage svg{width:100%;height:100%;display:block}
 /* לפני הקריאה: ציור עיפרון אפור וקפוא. אחרי: צבע ותנועה */
@@ -22,7 +42,6 @@ html,body{margin:0;height:100%;background:var(--bg);font-family:Rubik,Arial,sans
 .w.next{background:#fff1c9}
 .w.ok{color:var(--ok);background:transparent}
 .controls{display:flex;gap:22px;align-items:center}
-button{font-family:inherit;cursor:pointer}
 .mic{width:92px;height:92px;border-radius:50%;border:none;background:var(--accent);color:#fff;font-size:42px;box-shadow:0 4px 12px rgba(0,0,0,.15)}
 .mic.on{background:var(--warn);animation:pulse 1.2s infinite}
 .mic[disabled]{opacity:.35}
@@ -47,15 +66,22 @@ button{font-family:inherit;cursor:pointer}
 @keyframes spin{0%{transform:translateY(0) rotate(0)}50%{transform:translateY(-80px) rotate(180deg)}100%{transform:translateY(0) rotate(360deg)}}
 .alive .p1 .cat-inner{animation:jump .8s ease-in-out .3s 3}
 .alive .p2 .cat-inner{animation:hop .5s ease-in-out .8s 4}
-.p3 .cat-inner,.p4 .cat-inner{transform-origin:center}
+.p3 .cat-inner,.end .cat-inner{transform-origin:center}
 .alive .p3 .cat-inner{animation:spin 1.3s ease-in-out .3s 2}
-.alive .p4 .cat-inner{animation:jump .8s ease-in-out infinite}
+.alive .end .cat-inner{animation:jump .8s ease-in-out infinite}
 
 .wing{transform-box:fill-box;animation:flap .22s ease-in-out infinite alternate}
 .wl{transform-origin:right center}.wr{transform-origin:left center}
 @keyframes flap{to{transform:scaleX(.25)}}
 .alive .p2 .butterfly-move{animation:fly 4.5s ease-in-out .2s forwards}
 @keyframes fly{0%{transform:translate(0,0)}25%{transform:translate(-70px,-40px)}55%{transform:translate(30px,-110px)}100%{transform:translate(-150px,-240px)}}
+.alive .b1 .butterfly-move{animation:loop 3.5s ease-in-out infinite}
+@keyframes loop{0%,100%{transform:translate(0,0)}25%{transform:translate(-45px,-25px)}50%{transform:translate(0,-38px)}75%{transform:translate(45px,-25px)}}
+.alive .b2 .butterfly-move{animation:land 3s ease-in-out .3s forwards}
+@keyframes land{0%{transform:translate(0,0)}40%{transform:translate(-35px,-18px)}70%{transform:translate(-72px,8px)}100%{transform:translate(-93px,27px)}}
+.bigflower{transform-box:fill-box;transform-origin:center bottom}
+.alive .b2 .bigflower{animation:bloom 1.4s ease-out forwards, sway 2.4s ease-in-out 1.4s infinite}
+@keyframes bloom{0%{transform:scale(.4)}70%{transform:scale(1.12)}100%{transform:scale(1)}}
 
 .sun{transform-box:fill-box;transform-origin:center}
 .alive .sun{animation:sunspin 8s linear infinite}
@@ -69,8 +95,21 @@ button{font-family:inherit;cursor:pointer}
 </style>
 </head>
 <body>
-<div id="app">
-  <div class="top"><span id="title">מיצי והפרפר</span><span id="pageNum"></span></div>
+
+<!-- מסך הספרייה -->
+<div id="library">
+  <h1>📚 הספרייה שלי</h1>
+  <div class="sub">בחרו ספר וקראו בקול — הציורים מתעוררים לחיים!</div>
+  <div class="shelf" id="shelf"></div>
+</div>
+
+<!-- מסך הקריאה -->
+<div id="reader" class="hidden">
+  <div class="top">
+    <button class="home" id="home" aria-label="חזרה לספרייה">🏠</button>
+    <span id="title"></span>
+    <span id="pageNum"></span>
+  </div>
   <div class="stage" id="stage"></div>
   <div class="text" id="text"></div>
   <div class="status" id="status"></div>
@@ -79,19 +118,39 @@ button{font-family:inherit;cursor:pointer}
     <button class="mic" id="mic" aria-label="להתחיל להקשיב">🎤</button>
     <button class="nav" id="next" aria-label="הדף הבא">←</button>
   </div>
+  <button class="skip" id="skip">דילוג (להורים)</button>
 </div>
-<button class="skip" id="skip">דילוג (להורים)</button>
 
 <script>
 /* =========================================================
-   1. תוכן הספר — כאן משנים טקסט ודפים
+   1. הספרים — כדי להוסיף סיפור, מעתיקים בלוק { ... } ומשנים
+      title  = שם הספר
+      cover  = איזה ציור יופיע על הכריכה
+      pages  = הדפים: text (עם ניקוד) + scene (שם הציור)
+      דף "כל הכבוד" בסוף נוסף אוטומטית.
    ========================================================= */
-const PAGES = [
-  { text: 'זֹאת מִיצִי. מִיצִי הִיא חֲתוּלָה קְטַנָּה.', scene: 'p1' },
-  { text: 'מִיצִי רוֹאָה פַּרְפַּר. הַפַּרְפַּר עָף גָּבוֹהַּ.', scene: 'p2' },
-  { text: 'מִיצִי קוֹפֶצֶת וְצוֹחֶקֶת. אֵיזֶה יוֹם יָפֶה!', scene: 'p3' },
-  { text: 'כָּל הַכָּבוֹד! סִיַּמְתָּ אֶת הַסֵּפֶר!', scene: 'p4', end: true }
+const BOOKS = [
+  {
+    id: 'mitzi',
+    title: 'מִיצִי וְהַפַּרְפַּר',
+    cover: 'p1',
+    pages: [
+      { text: 'זֹאת מִיצִי. מִיצִי הִיא חֲתוּלָה קְטַנָּה.', scene: 'p1' },
+      { text: 'מִיצִי רוֹאָה פַּרְפַּר. הַפַּרְפַּר עָף גָּבוֹהַּ.', scene: 'p2' },
+      { text: 'מִיצִי קוֹפֶצֶת וְצוֹחֶקֶת. אֵיזֶה יוֹם יָפֶה!', scene: 'p3' }
+    ]
+  },
+  {
+    id: 'purple-butterfly',
+    title: 'הַפַּרְפַּר הַסָּגֹל',
+    cover: 'b1',
+    pages: [
+      { text: 'יֵשׁ פַּרְפַּר סָגֹל בַּגִּנָּה.', scene: 'b1' },
+      { text: 'הַפַּרְפַּר נָח עַל פֶּרַח אָדֹם.', scene: 'b2' }
+    ]
+  }
 ];
+const END_TEXT = 'כָּל הַכָּבוֹד! סִיַּמְתָּ אֶת הַסֵּפֶר!';
 
 /* =========================================================
    2. ציורים (SVG)
@@ -129,6 +188,19 @@ function flower(x, y, c) {
   return `<g class="flower"><line x1="${x}" y1="${y}" x2="${x}" y2="${y - 26}" stroke="#2d6a4f" stroke-width="3"/>
     <circle cx="${x}" cy="${y - 30}" r="8" fill="${c}"/><circle cx="${x}" cy="${y - 30}" r="3" fill="#ffd166"/></g>`;
 }
+function bigFlower(x, y, c) {
+  const top = y - 110;
+  let petals = '';
+  for (let i = 0; i < 6; i++) {
+    const a = i * Math.PI / 3;
+    petals += `<circle cx="${x + Math.cos(a) * 24}" cy="${top + Math.sin(a) * 24}" r="18" fill="${c}"/>`;
+  }
+  return `<g class="bigflower">
+    <path d="M${x} ${y} Q${x - 10} ${y - 55} ${x} ${top}" stroke="#2d6a4f" stroke-width="6" fill="none"/>
+    <ellipse cx="${x - 20}" cy="${y - 45}" rx="18" ry="8" fill="#52b788" transform="rotate(-30 ${x - 20} ${y - 45})"/>
+    <ellipse cx="${x + 18}" cy="${y - 65}" rx="18" ry="8" fill="#52b788" transform="rotate(30 ${x + 18} ${y - 65})"/>
+    ${petals}<circle cx="${x}" cy="${top}" r="16" fill="#ffd166"/></g>`;
+}
 function star(x, y, r, delay) {
   let pts = '';
   for (let i = 0; i < 10; i++) {
@@ -137,10 +209,10 @@ function star(x, y, r, delay) {
   }
   return `<polygon class="star" style="animation-delay:${delay}s,${delay + 1.4}s" points="${pts}" fill="#ffd166" stroke="#f4a259" stroke-width="1.5"/>`;
 }
-function butterfly(x, y) {
-  return `<g transform="translate(${x},${y})"><g class="butterfly-move">
+function butterfly(x, y, s = 1) {
+  return `<g transform="translate(${x},${y}) scale(${s})"><g class="butterfly-move">
     <g class="wing wl"><ellipse cx="-11" cy="-4" rx="12" ry="16" fill="#cdb4db"/><ellipse cx="-9" cy="10" rx="7" ry="8" fill="#b8a1cc"/></g>
-    <g class="wing wr"><ellipse cx="11" cy="-4" rx="12" ry="16" fill="#ffafcc"/><ellipse cx="9" cy="10" rx="7" ry="8" fill="#f497b6"/></g>
+    <g class="wing wr"><ellipse cx="11" cy="-4" rx="12" ry="16" fill="#9d7fc4"/><ellipse cx="9" cy="10" rx="7" ry="8" fill="#b8a1cc"/></g>
     <rect x="-2.5" y="-14" width="5" height="26" rx="2.5" fill="#5a4a42"/>
   </g></g>`;
 }
@@ -150,21 +222,28 @@ function ground() {
     <rect y="235" width="400" height="65" fill="#95d5b2"/>
     ${flower(40, 270, '#ff8fab')}${flower(340, 275, '#a2d2ff')}${flower(370, 262, '#ffc8dd')}`;
 }
+// כל ציור מקבל שם. השם הזה הוא ה-scene של הדף.
 const SCENES = {
+  // מיצי והפרפר
   p1: () => `${ground()}${sun(60, 60)}${cat(200, 175)}`,
   p2: () => `${ground()}${sun(60, 60)}${cat(160, 175)}${butterfly(280, 150)}`,
   p3: () => `${ground()}${sun(60, 60)}${cat(200, 175)}${star(90, 140, 14, .2)}${star(320, 120, 18, .5)}${star(260, 60, 12, .8)}${star(130, 70, 10, 1.1)}`,
-  p4: () => `${ground()}${sun(60, 60)}${cat(200, 175)}${star(80, 130, 16, .1)}${star(330, 130, 16, .3)}${star(200, 40, 14, .5)}`
+  // הפרפר הסגול
+  b1: () => `${ground()}${sun(60, 60)}${flower(120, 250, '#ffafcc')}${flower(280, 255, '#ffd166')}${butterfly(200, 170, 1.4)}`,
+  b2: () => `${ground()}${sun(60, 60)}${bigFlower(200, 245, '#e63946')}${butterfly(330, 90, 1.4)}`,
+  // דף הסיום של כל ספר
+  end: () => `${ground()}${sun(60, 60)}${cat(200, 175)}${star(80, 130, 16, .1)}${star(330, 130, 16, .3)}${star(200, 40, 14, .5)}`
 };
+const svgOf = (scene) => `<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice"><g class="scene ${scene}">${SCENES[scene]()}</g></svg>`;
 
 /* =========================================================
    3. השוואת מילים — מסלקת ניקוד ומאפשרת טעויות קטנות
    ========================================================= */
 const FINALS = { 'ך': 'כ', 'ם': 'מ', 'ן': 'נ', 'ף': 'פ', 'ץ': 'צ' };
 function norm(s) {
-  return s.replace(/[\u0591-\u05C7]/g, '')          // ניקוד וטעמים
+  return s.replace(/[֑-ׇ]/g, '')          // ניקוד וטעמים
           .replace(/[ךםןףץ]/g, c => FINALS[c])       // אותיות סופיות
-          .replace(/[^\u05D0-\u05EA\s]/g, ' ')        // סימני פיסוק
+          .replace(/[^א-ת\s]/g, ' ')        // סימני פיסוק
           .trim().split(/\s+/).filter(Boolean);
 }
 const loose = w => w.replace(/[וי]/g, '');             // כתיב מלא/חסר
@@ -198,13 +277,50 @@ function align(heardWords, target) {
 const PASS_RATIO = 0.75; // כמה מהמילים חייבות להיקרא נכון
 
 /* =========================================================
-   4. זיהוי קולי
+   4. ספרייה — מסך הבחירה
+   ========================================================= */
+const $ = id => document.getElementById(id);
+function finishedSet() {
+  try { return new Set(JSON.parse(localStorage.getItem('livebook-finished') || '[]')); } catch (_) { return new Set(); }
+}
+function markFinished(id) {
+  const s = finishedSet(); s.add(id);
+  try { localStorage.setItem('livebook-finished', JSON.stringify([...s])); } catch (_) {}
+}
+function showLibrary() {
+  stopListening();
+  const fin = finishedSet();
+  $('shelf').innerHTML = '';
+  BOOKS.forEach(b => {
+    const card = document.createElement('button');
+    card.className = 'book';
+    card.innerHTML = `<span class="cover alive">${svgOf(b.cover)}</span>
+      <span class="name">${b.title}</span>
+      <span class="meta">${b.pages.length} דפים</span>
+      ${fin.has(b.id) ? '<span class="done">⭐ קראתי</span>' : ''}`;
+    card.onclick = () => openBook(b);
+    $('shelf').appendChild(card);
+  });
+  $('reader').classList.add('hidden');
+  $('library').classList.remove('hidden');
+}
+function openBook(b) {
+  book = b;
+  pages = [...b.pages, { text: END_TEXT, scene: 'end', end: true }];
+  page = 0;
+  $('title').textContent = b.title;
+  $('library').classList.add('hidden');
+  $('reader').classList.remove('hidden');
+  render();
+}
+
+/* =========================================================
+   5. זיהוי קולי
    ========================================================= */
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 let rec = null, listening = false, finalText = '', done = false;
-let page = 0, target = [], spans = [];
+let book = null, pages = [], page = 0, target = [], spans = [];
 
-const $ = id => document.getElementById(id);
 const stage = $('stage'), textEl = $('text'), micBtn = $('mic'), statusEl = $('status');
 
 function setStatus(t) { statusEl.textContent = t; }
@@ -260,7 +376,7 @@ function check(heard) {
 }
 
 /* =========================================================
-   5. הצלחה — הציור מתעורר
+   6. הצלחה — הציור מתעורר
    ========================================================= */
 function success() {
   if (done) return;
@@ -272,8 +388,8 @@ function success() {
   chime(); confetti();
   micBtn.disabled = true;
   const nx = $('next');
-  nx.disabled = page >= PAGES.length - 1;
-  nx.classList.toggle('glow', !nx.disabled);
+  nx.disabled = false;
+  nx.classList.add('glow');
 }
 function chime() {
   try {
@@ -303,17 +419,30 @@ function confetti() {
 }
 
 /* =========================================================
-   6. החלפת דפים
+   7. החלפת דפים
    ========================================================= */
 function render() {
-  const pg = PAGES[page];
+  const pg = pages[page];
   done = false; finalText = '';
   stage.classList.remove('alive');
-  stage.innerHTML = `<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice"><g class="scene ${pg.scene}">${SCENES[pg.scene]()}</g></svg>`;
-  const tokens = pg.text.split(/\s+/);
+  stage.innerHTML = svgOf(pg.scene);
   textEl.innerHTML = '';
   spans = []; target = [];
-  tokens.forEach((t, i) => {
+  $('pageNum').textContent = pg.end ? '⭐' : `${page + 1} / ${pages.length - 1}`;
+  $('prev').disabled = page === 0;
+  const nx = $('next'); nx.disabled = true; nx.classList.remove('glow');
+
+  if (pg.end) {                       // דף הסיום מתעורר לבד
+    textEl.textContent = pg.text;
+    micBtn.disabled = true;
+    stage.classList.add('alive');
+    setStatus('');
+    markFinished(book.id);
+    setTimeout(() => { chime(); confetti(); }, 300);
+    nx.disabled = false; nx.textContent = '↺'; nx.setAttribute('aria-label', 'לקרוא שוב');
+    return;
+  }
+  pg.text.split(/\s+/).forEach((t, i) => {
     const s = document.createElement('span');
     s.className = 'w' + (i === 0 ? ' next' : '');
     s.textContent = t;
@@ -321,23 +450,9 @@ function render() {
     textEl.appendChild(s); textEl.append(' ');
     spans.push(s); target.push(norm(t)[0] || '');
   });
-  $('pageNum').textContent = `${page + 1} / ${PAGES.length}`;
-  $('prev').disabled = page === 0;
-  const nx = $('next'); nx.disabled = true; nx.classList.remove('glow');
   micBtn.disabled = false;
-  if (pg.end) {                       // דף הסיום מתעורר לבד
-    textEl.innerHTML = '';
-    spans = [];
-    textEl.textContent = pg.text;
-    micBtn.disabled = true;
-    stage.classList.add('alive');
-    setStatus('');
-    setTimeout(() => { chime(); confetti(); }, 300);
-    nx.disabled = false; nx.textContent = '↺'; nx.setAttribute('aria-label', 'לקרוא שוב');
-  } else {
-    nx.textContent = '←'; nx.setAttribute('aria-label', 'הדף הבא');
-    setStatus(SR ? 'לחצו על המיקרופון והתחילו לקרוא' : 'הדפדפן הזה לא תומך בזיהוי קולי. פתחו בספארי באייפד.');
-  }
+  nx.textContent = '←'; nx.setAttribute('aria-label', 'הדף הבא');
+  setStatus(SR ? 'לחצו על המיקרופון והתחילו לקרוא' : 'הדפדפן הזה לא תומך בזיהוי קולי. פתחו בספארי באייפד.');
 }
 
 // לחיצה על מילה — האייפד מקריא אותה (עוזר לילד שנתקע)
@@ -354,13 +469,14 @@ function sayWord(w) {
 micBtn.onclick = () => listening ? stopListening() : startListening();
 $('next').onclick = () => {
   stopListening();
-  if (PAGES[page].end) page = 0; else if (page < PAGES.length - 1) page++;
+  if (pages[page].end) page = 0; else page++;
   render();
 };
 $('prev').onclick = () => { stopListening(); if (page > 0) { page--; render(); } };
-$('skip').onclick = () => { if (!PAGES[page].end) success(); };
+$('skip').onclick = () => { if (!pages[page].end) success(); };
+$('home').onclick = showLibrary;
 
-render();
+showLibrary();
 </script>
 </body>
 </html>
