@@ -62,11 +62,14 @@ button{font-family:inherit;cursor:pointer}
 .gate{position:fixed;inset:0;background:rgba(58,46,42,.55);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
 .gate-box{background:#fff;border-radius:24px;padding:26px 24px;width:100%;max-width:340px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.2)}
 .gate-box h2{margin:0 0 6px;font-size:22px}
-.gate-q{font-size:34px;font-weight:800;margin:12px 0;direction:ltr;unicode-bidi:isolate}
-.gate-box input::-webkit-inner-spin-button,.gate-box input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
-.gate-box input{-moz-appearance:textfield}
-.gate-box input{width:100%;font-size:28px;text-align:center;padding:10px;border:2px solid #e0d6cc;border-radius:14px;font-family:inherit}
-.gate-err{color:var(--warn);min-height:1.4em;font-size:16px;margin-top:6px}
+.slider{position:relative;height:64px;border-radius:32px;background:#f1ebe4;margin:18px 0 10px;touch-action:none;overflow:hidden}
+.slider-fill{position:absolute;top:0;right:0;height:100%;width:0;background:#d8e9dc;border-radius:32px}
+.slider-target{position:absolute;left:20px;top:0;line-height:64px;font-size:24px;opacity:.55}
+.knob{position:absolute;top:4px;right:4px;width:56px;height:56px;border-radius:50%;background:#3a2e2a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 3px 8px rgba(0,0,0,.25);touch-action:none;cursor:grab}
+.knob.back,.slider-fill.back{transition:transform .25s ease,width .25s ease}
+.hold-bar{height:8px;border-radius:4px;background:#f1ebe4;overflow:hidden}
+#holdBar{height:100%;width:0;background:var(--ok)}
+.gate-hint{font-size:17px;opacity:.8}
 .gate-btns{display:flex;gap:10px;margin-top:10px}
 .gate-btns button{flex:1;font-size:18px;padding:12px;border-radius:14px;border:none;font-weight:600}
 .gate-ok{background:#3a2e2a;color:#fff}.gate-cancel{background:#f1ebe4;color:var(--ink)}
@@ -303,11 +306,10 @@ button{font-family:inherit;cursor:pointer}
 <div class="gate hidden" id="gate">
   <div class="gate-box">
     <h2>כניסת בודק (להורים)</h2>
-    <div>כדי להמשיך, פתרו את התרגיל:</div>
-    <div class="gate-q" id="gateQ"></div>
-    <input id="gateA" type="number" inputmode="numeric" autocomplete="off">
-    <div class="gate-err" id="gateErr"></div>
-    <div class="gate-btns"><button class="gate-cancel" id="gateCancel">ביטול</button><button class="gate-ok" id="gateOk">אישור</button></div>
+    <div class="gate-hint" id="gateHint">גררו את הכפתור עד הסוף והחזיקו 2 שניות</div>
+    <div class="slider" id="slider"><div class="slider-fill" id="sliderFill"></div><div class="slider-target">🔓</div><div class="knob" id="knob">⚙️</div></div>
+    <div class="hold-bar"><div id="holdBar"></div></div>
+    <div class="gate-btns"><button class="gate-cancel" id="gateCancel">ביטול</button></div>
   </div>
 </div>
 
@@ -989,27 +991,60 @@ function updateTesterUI() {
   $('testerBtn').classList.toggle('hidden', !tester);   // הכפתור מופיע רק כשמצב בודק פעיל — כדי לצאת
   $('testerBadge').classList.toggle('hidden', !tester);
 }
-// כניסה: לחיצה ארוכה (3 שניות) על הכותרת, ואז תרגיל כפל
-let gateAnswer = 0, pressTimer = null;
+// כניסה: לוחצים על ⚙️, גוררים את הכפתור עד הסוף ומחזיקים 2 שניות
+const HOLD_MS = 2000;
+let drag = null, holding = false, holdStart = 0, holdRaf = 0;
+function setKnob(dx, animate) {
+  $('knob').classList.toggle('back', !!animate); $('sliderFill').classList.toggle('back', !!animate);
+  $('knob').style.transform = `translateX(${-dx}px)`;          // גוררים מימין לשמאל
+  $('sliderFill').style.width = dx ? (dx + 60) + 'px' : '0';
+}
 function openGate() {
-  const a = 6 + Math.floor(Math.random() * 4), b = 6 + Math.floor(Math.random() * 4);
-  gateAnswer = a * b;
-  $('gateQ').textContent = `${a} × ${b} = ?`;
-  $('gateA').value = ''; $('gateErr').textContent = '';
+  drag = null; cancelHold(); setKnob(0, false);
+  $('gateHint').textContent = 'גררו את הכפתור עד הסוף והחזיקו 2 שניות';
   $('gate').classList.remove('hidden');
-  setTimeout(() => $('gateA').focus(), 50);
 }
-function closeGate() { $('gate').classList.add('hidden'); }
-function checkGate() {
-  if (+$('gateA').value === gateAnswer) { closeGate(); setTester(true); }
-  else { $('gateErr').textContent = 'לא נכון, נסו שוב'; $('gateA').value = ''; }
+function closeGate() { drag = null; cancelHold(); $('gate').classList.add('hidden'); }
+function startHold() {
+  if (holding) return;
+  holding = true; holdStart = performance.now();
+  $('gateHint').textContent = 'ממשיכים להחזיק...';
+  const step = now => {
+    if (!holding) return;
+    const p = Math.min(1, (now - holdStart) / HOLD_MS);
+    $('holdBar').style.width = (p * 100) + '%';
+    if (p >= 1) { closeGate(); setTester(true); return; }
+    holdRaf = requestAnimationFrame(step);
+  };
+  holdRaf = requestAnimationFrame(step);
 }
-function startPress(e) {
-  if (tester) return;
-  clearTimeout(pressTimer);
-  pressTimer = setTimeout(openGate, 3000);
+function cancelHold() {
+  holding = false; cancelAnimationFrame(holdRaf);
+  $('holdBar').style.width = '0';
 }
-function endPress() { clearTimeout(pressTimer); }
+const knob = $('knob');
+knob.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  const max = $('slider').clientWidth - 64;
+  drag = { x0: e.clientX, max };
+  try { knob.setPointerCapture(e.pointerId); } catch (_) {}
+  setKnob(0, false);
+});
+knob.addEventListener('pointermove', e => {
+  if (!drag) return;
+  const dx = Math.max(0, Math.min(drag.max, drag.x0 - e.clientX));
+  setKnob(dx, false);
+  if (dx >= drag.max - 3) startHold();
+  else if (holding) { cancelHold(); $('gateHint').textContent = 'גררו את הכפתור עד הסוף והחזיקו 2 שניות'; }
+});
+const release = () => {
+  if (!drag) return;
+  drag = null;
+  if (holding) { cancelHold(); $('gateHint').textContent = 'עזבתם מוקדם מדי — נסו שוב'; }
+  setKnob(0, true);
+};
+knob.addEventListener('pointerup', release);
+knob.addEventListener('pointercancel', release);
 function showLibrary() {
   stopListening();
   updateTesterUI();
@@ -1208,15 +1243,8 @@ $('testPlay').onclick = () => {
   else success();
 };
 $('testerBtn').onclick = () => setTester(false);
-const lt = $('libTitle');
-lt.addEventListener('touchstart', startPress, { passive: true });
-lt.addEventListener('mousedown', startPress);
-['touchend', 'touchcancel', 'touchmove', 'mouseup', 'mouseleave'].forEach(ev => lt.addEventListener(ev, endPress));
-lt.addEventListener('contextmenu', e => e.preventDefault());
 $('gear').onclick = () => tester ? setTester(false) : openGate();
-$('gateOk').onclick = checkGate;
 $('gateCancel').onclick = closeGate;
-$('gateA').addEventListener('keydown', e => { if (e.key === 'Enter') checkGate(); });
 $('home').onclick = showLibrary;
 
 showLibrary();
