@@ -57,6 +57,18 @@ button{font-family:inherit;cursor:pointer}
 .tester-bar{max-width:960px;margin:34px auto 0;text-align:center}
 .tester-btn{background:#fff;border:2px dashed #c9b8a6;border-radius:16px;padding:10px 18px;font-size:17px;color:var(--ink)}
 .tester-btn.on{background:#3a2e2a;color:#fff;border-style:solid;border-color:#3a2e2a}
+#libTitle{-webkit-touch-callout:none;cursor:default}
+.gate{position:fixed;inset:0;background:rgba(58,46,42,.55);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
+.gate-box{background:#fff;border-radius:24px;padding:26px 24px;width:100%;max-width:340px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.gate-box h2{margin:0 0 6px;font-size:22px}
+.gate-q{font-size:34px;font-weight:800;margin:12px 0;direction:ltr;unicode-bidi:isolate}
+.gate-box input::-webkit-inner-spin-button,.gate-box input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.gate-box input{-moz-appearance:textfield}
+.gate-box input{width:100%;font-size:28px;text-align:center;padding:10px;border:2px solid #e0d6cc;border-radius:14px;font-family:inherit}
+.gate-err{color:var(--warn);min-height:1.4em;font-size:16px;margin-top:6px}
+.gate-btns{display:flex;gap:10px;margin-top:10px}
+.gate-btns button{flex:1;font-size:18px;padding:12px;border-radius:14px;border:none;font-weight:600}
+.gate-ok{background:#3a2e2a;color:#fff}.gate-cancel{background:#f1ebe4;color:var(--ink)}
 .tester-badge{position:fixed;bottom:10px;left:10px;background:#3a2e2a;color:#fff;font-size:14px;padding:4px 12px;border-radius:12px;z-index:5}
 .test-play{border:none;border-radius:18px;background:#3a2e2a;color:#fff;font-size:18px;padding:12px 18px;font-weight:600}
 .confetti{position:absolute;top:-40px;font-size:34px;pointer-events:none;animation:fall 2.4s ease-in forwards}
@@ -279,10 +291,22 @@ button{font-family:inherit;cursor:pointer}
 
 <!-- מסך הספרייה -->
 <div id="library">
-  <h1>📚 הספרייה שלי</h1>
+  <h1 id="libTitle">📚 הספרייה שלי</h1>
   <div class="sub">בחרו ספר וקראו בקול — הציורים מתעוררים לחיים!</div>
   <div class="shelf" id="shelf"></div>
-  <div class="tester-bar"><button class="tester-btn" id="testerBtn"></button></div>
+  <div class="tester-bar"><button class="tester-btn on hidden" id="testerBtn">🔧 מצב בודק פעיל — לחצו ליציאה</button></div>
+</div>
+
+<!-- שער להורים: כניסה למצב בודק -->
+<div class="gate hidden" id="gate">
+  <div class="gate-box">
+    <h2>כניסת בודק</h2>
+    <div>כדי להמשיך, פתרו את התרגיל:</div>
+    <div class="gate-q" id="gateQ"></div>
+    <input id="gateA" type="number" inputmode="numeric" autocomplete="off">
+    <div class="gate-err" id="gateErr"></div>
+    <div class="gate-btns"><button class="gate-cancel" id="gateCancel">ביטול</button><button class="gate-ok" id="gateOk">אישור</button></div>
+  </div>
 </div>
 
 <!-- מסך הקריאה -->
@@ -960,11 +984,30 @@ function setTester(on) {
   updateTesterUI();
 }
 function updateTesterUI() {
-  const btn = $('testerBtn');
-  btn.textContent = tester ? '🔧 מצב בודק פעיל — לחצו ליציאה' : '🔧 כניסת בודק';
-  btn.classList.toggle('on', tester);
+  $('testerBtn').classList.toggle('hidden', !tester);   // הכפתור מופיע רק כשמצב בודק פעיל — כדי לצאת
   $('testerBadge').classList.toggle('hidden', !tester);
 }
+// כניסה: לחיצה ארוכה (3 שניות) על הכותרת, ואז תרגיל כפל
+let gateAnswer = 0, pressTimer = null;
+function openGate() {
+  const a = 6 + Math.floor(Math.random() * 4), b = 6 + Math.floor(Math.random() * 4);
+  gateAnswer = a * b;
+  $('gateQ').textContent = `${a} × ${b} = ?`;
+  $('gateA').value = ''; $('gateErr').textContent = '';
+  $('gate').classList.remove('hidden');
+  setTimeout(() => $('gateA').focus(), 50);
+}
+function closeGate() { $('gate').classList.add('hidden'); }
+function checkGate() {
+  if (+$('gateA').value === gateAnswer) { closeGate(); setTester(true); }
+  else { $('gateErr').textContent = 'לא נכון, נסו שוב'; $('gateA').value = ''; }
+}
+function startPress(e) {
+  if (tester) return;
+  clearTimeout(pressTimer);
+  pressTimer = setTimeout(openGate, 3000);
+}
+function endPress() { clearTimeout(pressTimer); }
 function showLibrary() {
   stopListening();
   updateTesterUI();
@@ -1162,7 +1205,15 @@ $('testPlay').onclick = () => {
   if (done) { render(); setTimeout(success, 400); }   // להריץ שוב את האנימציה
   else success();
 };
-$('testerBtn').onclick = () => setTester(!tester);
+$('testerBtn').onclick = () => setTester(false);
+const lt = $('libTitle');
+lt.addEventListener('touchstart', startPress, { passive: true });
+lt.addEventListener('mousedown', startPress);
+['touchend', 'touchcancel', 'touchmove', 'mouseup', 'mouseleave'].forEach(ev => lt.addEventListener(ev, endPress));
+lt.addEventListener('contextmenu', e => e.preventDefault());
+$('gateOk').onclick = checkGate;
+$('gateCancel').onclick = closeGate;
+$('gateA').addEventListener('keydown', e => { if (e.key === 'Enter') checkGate(); });
 $('home').onclick = showLibrary;
 
 showLibrary();
