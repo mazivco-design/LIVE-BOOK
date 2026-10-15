@@ -57,6 +57,7 @@ button{font-family:inherit;cursor:pointer}
 .tester-bar{max-width:960px;margin:34px auto 0;text-align:center}
 .tester-btn{background:#fff;border:2px dashed #c9b8a6;border-radius:16px;padding:10px 18px;font-size:17px;color:var(--ink)}
 .tester-btn.on{background:#3a2e2a;color:#fff;border-style:solid;border-color:#3a2e2a}
+.gear{position:fixed;top:14px;left:14px;width:48px;height:48px;border-radius:50%;border:none;background:#fff;font-size:24px;box-shadow:0 3px 10px rgba(0,0,0,.1);z-index:4}
 #libTitle{-webkit-touch-callout:none;cursor:default}
 .gate{position:fixed;inset:0;background:rgba(58,46,42,.55);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
 .gate-box{background:#fff;border-radius:24px;padding:26px 24px;width:100%;max-width:340px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.2)}
@@ -291,6 +292,7 @@ button{font-family:inherit;cursor:pointer}
 
 <!-- מסך הספרייה -->
 <div id="library">
+  <button class="gear" id="gear" aria-label="הגדרות להורים">⚙️</button>
   <h1 id="libTitle">📚 הספרייה שלי</h1>
   <div class="sub">בחרו ספר וקראו בקול — הציורים מתעוררים לחיים!</div>
   <div class="shelf" id="shelf"></div>
@@ -300,7 +302,7 @@ button{font-family:inherit;cursor:pointer}
 <!-- שער להורים: כניסה למצב בודק -->
 <div class="gate hidden" id="gate">
   <div class="gate-box">
-    <h2>כניסת בודק</h2>
+    <h2>כניסת בודק (להורים)</h2>
     <div>כדי להמשיך, פתרו את התרגיל:</div>
     <div class="gate-q" id="gateQ"></div>
     <input id="gateA" type="number" inputmode="numeric" autocomplete="off">
@@ -1211,6 +1213,7 @@ lt.addEventListener('touchstart', startPress, { passive: true });
 lt.addEventListener('mousedown', startPress);
 ['touchend', 'touchcancel', 'touchmove', 'mouseup', 'mouseleave'].forEach(ev => lt.addEventListener(ev, endPress));
 lt.addEventListener('contextmenu', e => e.preventDefault());
+$('gear').onclick = () => tester ? setTester(false) : openGate();
 $('gateOk').onclick = checkGate;
 $('gateCancel').onclick = closeGate;
 $('gateA').addEventListener('keydown', e => { if (e.key === 'Enter') checkGate(); });
