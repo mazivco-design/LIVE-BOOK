@@ -37,7 +37,8 @@ button{font-family:inherit;cursor:pointer}
 .scene{filter:grayscale(1) contrast(1.15) brightness(1.08);transition:filter 1.2s ease}
 .alive .scene{filter:none}
 .stage:not(.alive) *{animation-play-state:paused !important}
-.text{max-width:900px;width:100%;font-size:clamp(28px,4.6vw,48px);line-height:1.9;text-align:center;font-weight:600;min-height:2em}
+.text{max-width:900px;width:100%;font-size:clamp(28px,4.6vw,48px);line-height:1.9;text-align:center;font-weight:600;min-height:2em;flex-shrink:0}
+.text.long{font-size:clamp(24px,3.7vw,40px);line-height:1.75}
 .w{display:inline-block;padding:0 .12em;border-radius:12px;transition:color .3s,background .3s;cursor:pointer}
 .w.next{background:#fff1c9}
 .w.ok{color:var(--ok);background:transparent}
@@ -92,6 +93,44 @@ button{font-family:inherit;cursor:pointer}
 @keyframes twinkle{50%{transform:scale(.7)}}
 .flower{transform-box:fill-box;transform-origin:center bottom;animation:sway 2s ease-in-out infinite}
 @keyframes sway{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+/* ---- עורב, צבי וזאב ---- */
+.deer-inner,.wolf-inner,.raven-inner,.hunter-inner{transform-box:fill-box;transform-origin:center bottom}
+.rwing{transform-box:fill-box;transform-origin:center bottom;animation:flapr .28s ease-in-out infinite alternate}
+@keyframes flapr{to{transform:scaleY(-.55)}}
+.sit .rwing{animation:none}
+@keyframes bob{50%{transform:translateY(-12px)}}
+@keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
+@keyframes stomp{50%{transform:translateY(-14px)}}
+.trap-l,.trap-r{transform-box:fill-box;transform-origin:center}
+.alive .f1 .raven-inner{animation:bob 1s ease-in-out infinite}
+.alive .f1 .deer-inner{animation:hop .6s ease-in-out .2s 3}
+.alive .f1 .wolf-inner{animation:hop .6s ease-in-out .5s 3}
+.alive .f2 .wolf-inner{animation:wiggle .3s ease-in-out 10}
+.alive .f2 .raven-move{animation:circleR 3s ease-in-out infinite}
+@keyframes circleR{0%,100%{transform:translate(0,0)}50%{transform:translate(-70px,18px)}}
+.alive .f3 .trap-l{animation:breakl 1s ease-out .3s forwards}
+.alive .f3 .trap-r{animation:breakr 1s ease-out .3s forwards}
+@keyframes breakl{to{transform:translate(-50px,-35px) rotate(-80deg);opacity:0}}
+@keyframes breakr{to{transform:translate(50px,-35px) rotate(80deg);opacity:0}}
+.alive .f3 .wolf-inner{animation:jump .8s ease-in-out 1s 2}
+.alive .f3 .deer-inner{animation:stomp .35s ease-in-out 3}
+.alive .f4 .deer-inner{animation:wiggle .3s ease-in-out 10}
+.alive .f4 .raven-move{animation:flyoff 3s ease-in .5s forwards}
+@keyframes flyoff{to{transform:translate(300px,-30px)}}
+.alive .f5 .run{animation:runleft 3.5s ease-in-out forwards}
+@keyframes runleft{to{transform:translateX(-70px)}}
+.alive .f5 .wolf-inner,.alive .f5 .hunter-inner{animation:stomp .35s ease-in-out 10}
+.alive .f6 .raven-move{animation:landhead 2.5s ease-in-out .3s forwards}
+@keyframes landhead{0%{transform:translate(0,0)}50%{transform:translate(22px,-8px)}100%{transform:translate(45px,42px)}}
+.alive .f7 .leap{animation:leap 2.6s ease-in-out .3s forwards}
+@keyframes leap{0%{transform:translate(0,0)}20%{transform:translate(-45px,-55px)}40%{transform:translate(-90px,0)}60%{transform:translate(-135px,-55px)}80%{transform:translate(-180px,0)}100%{transform:translate(-280px,-30px);opacity:0}}
+.alive .f7 .hunter-inner{animation:stomp .35s ease-in-out 1s 4}
+.alive .f7 .raven-inner,.alive .f8 .raven-inner,.alive .f9 .raven-inner{animation:bob 1s ease-in-out infinite}
+.net{opacity:0}
+.alive .f8 .net{animation:netdrop 1.1s ease-in .4s forwards}
+@keyframes netdrop{0%{opacity:1;transform:translateY(-230px)}100%{opacity:1;transform:translateY(0)}}
+.alive .f8 .wolf-inner{animation:wiggle .3s ease-in-out 1.6s 8}
+.alive .f9 .deer-inner{animation:hop .7s ease-in-out infinite}
 </style>
 </head>
 <body>
@@ -127,6 +166,7 @@ button{font-family:inherit;cursor:pointer}
       title  = שם הספר
       cover  = איזה ציור יופיע על הכריכה
       pages  = הדפים: text (עם ניקוד) + scene (שם הציור)
+      endScene = (לא חובה) הציור של דף הסיום
       דף "כל הכבוד" בסוף נוסף אוטומטית.
    ========================================================= */
 const BOOKS = [
@@ -147,6 +187,23 @@ const BOOKS = [
     pages: [
       { text: 'יֵשׁ פַּרְפַּר סָגֹל בַּגִּנָּה.', scene: 'b1' },
       { text: 'הַפַּרְפַּר נָח עַל פֶּרַח אָדֹם.', scene: 'b2' }
+    ]
+  },
+  {
+    id: 'raven-deer-wolf',
+    title: 'עוֹרֵב, צְבִי וּזְאֵב',
+    cover: 'f1',
+    endScene: 'f9',
+    pages: [
+      { text: 'עוֹרֵב, צְבִי וּזְאֵב נִפְגְּשׁוּ בַּיַּעַר. הֵם הֶחְלִיטוּ לִהְיוֹת כְּמוֹ אַחִים.', scene: 'f1' },
+      { text: 'יוֹם אֶחָד נָפַל הַזְּאֵב לְמַלְכֹּדֶת.', scene: 'f2' },
+      { text: 'הָעוֹרֵב קָרָא לַצְּבִי. הַצְּבִי שָׁבַר אֶת הַמַּלְכֹּדֶת.', scene: 'f3' },
+      { text: 'אַחַר כָּךְ נָפַל הַצְּבִי לְמַלְכֹּדֶת.', scene: 'f4' },
+      { text: 'אֲבָל הַזְּאֵב לֹא עָזַר. הוּא הֵבִיא אֶת הַצַּיָּדִים.', scene: 'f5' },
+      { text: 'הָעוֹרֵב אָמַר: שְׁכַב וְאַל תָּזוּז. אֲנִי אֵשֵׁב עַל רֹאשְׁךָ.', scene: 'f6' },
+      { text: 'הַצַּיָּדִים פָּתְחוּ אֶת הַמַּלְכֹּדֶת, וְהַצְּבִי בָּרַח!', scene: 'f7' },
+      { text: 'הָעוֹרֵב הוֹבִיל אֶת הַצַּיָּדִים אֶל הַזְּאֵב, וְהֵם תָּפְסוּ אוֹתוֹ.', scene: 'f8' },
+      { text: 'חָבֵר אֲמִתִּי עוֹזֵר גַּם בְּשָׁעָה קָשָׁה.', scene: 'f9' }
     ]
   }
 ];
@@ -222,6 +279,103 @@ function ground() {
     <rect y="235" width="400" height="65" fill="#95d5b2"/>
     ${flower(40, 270, '#ff8fab')}${flower(340, 275, '#a2d2ff')}${flower(370, 262, '#ffc8dd')}`;
 }
+
+/* ---- דמויות: עורב, צבי, זאב, צייד ---- */
+// f = 1 פונה ימינה, f = -1 פונה שמאלה. הרגליים בגובה y+60
+function deer(x, y, s = 1, f = 1, lying = false) {
+  const dy = lying ? 28 : 0;
+  const legs = lying
+    ? `<ellipse cx="-25" cy="26" rx="16" ry="7" fill="#a8612b"/><ellipse cx="25" cy="26" rx="16" ry="7" fill="#a8612b"/>`
+    : `<g fill="#a8612b"><rect x="-38" y="10" width="8" height="50" rx="3"/><rect x="-24" y="10" width="8" height="50" rx="3"/>
+       <rect x="18" y="10" width="8" height="50" rx="3"/><rect x="31" y="10" width="8" height="50" rx="3"/></g>`;
+  const eye = lying
+    ? `<path d="M56 -59 Q60 -56 64 -59" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round"/>`
+    : `<g class="eyes"><circle cx="60" cy="-60" r="4" fill="#333"/><circle cx="61.5" cy="-61.5" r="1.3" fill="#fff"/></g>`;
+  return `<g transform="translate(${x},${y + dy}) scale(${s * f},${s})"><g class="deer-inner">
+    ${legs}
+    <ellipse cx="-50" cy="-8" rx="8" ry="6" fill="#fff"/>
+    <ellipse cx="0" cy="4" rx="52" ry="27" fill="#c97b3d"/>
+    <g fill="#f3d5b5"><circle cx="-18" cy="-4" r="4"/><circle cx="2" cy="-10" r="4"/><circle cx="20" cy="-2" r="4"/></g>
+    <polygon points="28,-4 44,-52 62,-46 50,4" fill="#c97b3d"/>
+    <g stroke="#7a4a24" stroke-width="4" stroke-linecap="round" fill="none">
+      <path d="M54 -66 L48 -96 M50 -84 L38 -94 M49 -76 L58 -90"/><path d="M64 -66 L68 -94 M67 -84 L78 -92"/></g>
+    <ellipse cx="44" cy="-64" rx="11" ry="5" fill="#a8612b" transform="rotate(-30 44 -64)"/>
+    <ellipse cx="60" cy="-55" rx="20" ry="14" fill="#c97b3d"/>
+    <ellipse cx="76" cy="-50" rx="9" ry="7" fill="#b56a32"/><circle cx="83" cy="-51" r="3" fill="#333"/>
+    ${eye}
+  </g></g>`;
+}
+function wolf(x, y, s = 1, f = 1) {
+  return `<g transform="translate(${x},${y}) scale(${s * f},${s})"><g class="wolf-inner">
+    <path d="M-44 -6 Q-84 -14 -80 26 Q-64 10 -44 10Z" fill="#6c757d"/>
+    <g fill="#6c757d"><rect x="-34" y="8" width="9" height="52" rx="3"/><rect x="-20" y="8" width="9" height="52" rx="3"/>
+      <rect x="16" y="8" width="9" height="52" rx="3"/><rect x="29" y="8" width="9" height="52" rx="3"/></g>
+    <ellipse cx="0" cy="0" rx="50" ry="25" fill="#8d99ae"/>
+    <ellipse cx="6" cy="12" rx="30" ry="11" fill="#d6dbe0"/>
+    <polygon points="34,-40 38,-68 52,-44" fill="#6c757d"/><polygon points="50,-44 60,-68 66,-40" fill="#6c757d"/>
+    <circle cx="50" cy="-26" r="23" fill="#8d99ae"/>
+    <polygon points="62,-32 94,-21 62,-11" fill="#8d99ae"/><polygon points="66,-18 92,-20 66,-12" fill="#d6dbe0"/>
+    <circle cx="92" cy="-22" r="4.5" fill="#222"/>
+    <g class="eyes"><ellipse cx="56" cy="-32" rx="3.5" ry="4" fill="#222"/></g>
+    <path d="M44 -42 L60 -36" stroke="#4a4f55" stroke-width="2.5" stroke-linecap="round"/>
+  </g></g>`;
+}
+// העורב: מרכז הגוף ב-(x,y). sit = יושב בלי לנפנף
+function raven(x, y, s = 1, f = 1, sit = false) {
+  return `<g transform="translate(${x},${y}) scale(${s * f},${s})" class="${sit ? 'sit' : ''}"><g class="raven-move"><g class="raven-inner">
+    <polygon points="-18,-2 -40,-9 -40,9" fill="#222"/>
+    <line x1="-4" y1="12" x2="-6" y2="22" stroke="#555" stroke-width="2.5"/><line x1="6" y1="12" x2="6" y2="22" stroke="#555" stroke-width="2.5"/>
+    <ellipse cx="0" cy="0" rx="23" ry="14" fill="#222"/>
+    <circle cx="20" cy="-9" r="11" fill="#222"/>
+    <polygon points="28,-12 42,-7 28,-3" fill="#6c6c6c"/>
+    <circle cx="23" cy="-12" r="2.3" fill="#fff"/>
+    <g class="rwing"><path d="M-8 -6 Q0 -42 22 -34 Q12 -18 8 -4Z" fill="#3a3a3a"/></g>
+  </g></g></g>`;
+}
+function hunter(x, y, s = 1, f = 1) {
+  return `<g transform="translate(${x},${y}) scale(${s * f},${s})"><g class="hunter-inner">
+    <rect x="-11" y="18" width="9" height="42" rx="3" fill="#5c4033"/><rect x="3" y="18" width="9" height="42" rx="3" fill="#5c4033"/>
+    <rect x="-18" y="-26" width="36" height="50" rx="8" fill="#4f772d"/>
+    <rect x="-27" y="-20" width="10" height="34" rx="5" fill="#4f772d"/><rect x="17" y="-20" width="10" height="34" rx="5" fill="#4f772d"/>
+    <circle cx="0" cy="-42" r="15" fill="#f1c27d"/>
+    <circle cx="-5" cy="-43" r="2" fill="#333"/><circle cx="5" cy="-43" r="2" fill="#333"/>
+    <path d="M-5 -36 Q0 -33 5 -36" stroke="#333" stroke-width="1.8" fill="none"/>
+    <ellipse cx="0" cy="-56" rx="13" ry="8" fill="#386641"/><rect x="-20" y="-55" width="40" height="6" rx="3" fill="#386641"/>
+    <path d="M8 -60 Q18 -74 24 -70" stroke="#d62828" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </g></g>`;
+}
+// מלכודת: מרכז הבסיס ב-(x,y)
+function trap(x, y, s = 1) {
+  const teeth = d => { let t = ''; for (let i = 0; i < 5; i++) t += `${d * (4 + i * 6)},${i % 2 ? -18 : -24} `; return t; };
+  return `<g transform="translate(${x},${y}) scale(${s})">
+    <g class="trap-l"><path d="M-34 0 Q-34 -28 -2 -28 L-2 -19 Q-25 -19 -25 0Z" fill="#6b6b6b"/><polyline points="${teeth(-1)}" stroke="#444" stroke-width="2" fill="none"/></g>
+    <g class="trap-r"><path d="M34 0 Q34 -28 2 -28 L2 -19 Q25 -19 25 0Z" fill="#6b6b6b"/><polyline points="${teeth(1)}" stroke="#444" stroke-width="2" fill="none"/></g>
+    <rect x="-38" y="-2" width="76" height="7" rx="3" fill="#444"/>
+    <g fill="none" stroke="#555" stroke-width="2.5"><ellipse cx="46" cy="2" rx="6" ry="4"/><ellipse cx="57" cy="4" rx="6" ry="4"/></g>
+  </g>`;
+}
+function net(x, y) {
+  let lines = '';
+  for (let i = 0; i <= 8; i++) lines += `<line x1="${x + i * 20}" y1="${y}" x2="${x + i * 20}" y2="${y + 150}"/>`;
+  for (let j = 0; j <= 7; j++) lines += `<line x1="${x}" y1="${y + j * 21}" x2="${x + 160}" y2="${y + j * 21}"/>`;
+  return `<g class="net"><g stroke="#8b5e3c" stroke-width="3" stroke-linecap="round">${lines}</g></g>`;
+}
+function heart(x, y, r, delay) {
+  return `<path class="star" style="animation-delay:${delay}s,${delay + 1.4}s" fill="#ff6b8b"
+    d="M${x} ${y + r} C${x - r * 1.6} ${y - r * .2} ${x - r * .9} ${y - r * 1.4} ${x} ${y - r * .5} C${x + r * .9} ${y - r * 1.4} ${x + r * 1.6} ${y - r * .2} ${x} ${y + r}Z"/>`;
+}
+function pine(x, y, h) {
+  return `<rect x="${x - 5}" y="${y - 22}" width="10" height="22" fill="#7f5539"/>
+    <polygon points="${x - h * .38},${y - 18} ${x},${y - h} ${x + h * .38},${y - 18}" fill="#2d6a4f"/>
+    <polygon points="${x - h * .3},${y - h * .45} ${x},${y - h * 1.15} ${x + h * .3},${y - h * .45}" fill="#40916c"/>`;
+}
+function forest() {
+  return `<rect width="400" height="300" fill="#d8f3dc"/>
+    <ellipse cx="320" cy="62" rx="36" ry="12" fill="#fff" opacity=".9"/>
+    ${pine(22, 240, 120)}${pine(378, 240, 130)}${pine(62, 238, 85)}${pine(340, 238, 80)}
+    <rect y="235" width="400" height="65" fill="#a7c957"/>
+    ${flower(110, 272, '#ffc8dd')}${flower(300, 276, '#ffd166')}`;
+}
 // כל ציור מקבל שם. השם הזה הוא ה-scene של הדף.
 const SCENES = {
   // מיצי והפרפר
@@ -232,7 +386,17 @@ const SCENES = {
   b1: () => `${ground()}${sun(60, 60)}${flower(120, 250, '#ffafcc')}${flower(280, 255, '#ffd166')}${butterfly(200, 170, 1.4)}`,
   b2: () => `${ground()}${sun(60, 60)}${bigFlower(200, 245, '#e63946')}${butterfly(330, 90, 1.4)}`,
   // דף הסיום של כל ספר
-  end: () => `${ground()}${sun(60, 60)}${cat(200, 175)}${star(80, 130, 16, .1)}${star(330, 130, 16, .3)}${star(200, 40, 14, .5)}`
+  end: () => `${ground()}${sun(60, 60)}${cat(200, 175)}${star(80, 130, 16, .1)}${star(330, 130, 16, .3)}${star(200, 40, 14, .5)}`,
+  // עורב, צבי וזאב
+  f1: () => `${forest()}${deer(115, 175, .95, 1)}${wolf(290, 175, .95, -1)}${raven(205, 105, 1.1)}`,
+  f2: () => `${forest()}${wolf(195, 175)}${trap(225, 236)}${raven(320, 80, 1, -1)}`,
+  f3: () => `${forest()}${deer(105, 175, .9, 1)}${wolf(270, 175, .9, -1)}${trap(245, 236, .9)}${raven(200, 80, .9)}`,
+  f4: () => `${forest()}${deer(205, 175)}${trap(230, 236)}${raven(85, 80, 1)}`,
+  f5: () => `${forest()}<g class="run">${wolf(150, 175, .9, -1)}${hunter(275, 175, .95, -1)}${hunter(335, 175, .95, -1)}</g>`,
+  f6: () => `${forest()}${deer(195, 175, 1, 1, true)}${trap(225, 236)}${raven(300, 70, 1, -1)}`,
+  f7: () => `${forest()}<g class="leap">${deer(170, 175, .95, -1)}</g>${trap(230, 236)}${hunter(310, 175)}${raven(330, 85, .9, -1)}`,
+  f8: () => `${forest()}${wolf(185, 175)}${net(105, 95)}${hunter(330, 175, 1, -1)}${raven(300, 75, .9, -1)}`,
+  f9: () => `${forest()}${deer(170, 175)}${raven(275, 110, 1.1, -1)}${heart(110, 90, 14, .2)}${heart(300, 170, 12, .5)}${heart(220, 60, 10, .8)}${heart(345, 95, 11, 1.1)}`
 };
 const svgOf = (scene) => `<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice"><g class="scene ${scene}">${SCENES[scene]()}</g></svg>`;
 
@@ -306,7 +470,7 @@ function showLibrary() {
 }
 function openBook(b) {
   book = b;
-  pages = [...b.pages, { text: END_TEXT, scene: 'end', end: true }];
+  pages = [...b.pages, { text: END_TEXT, scene: b.endScene || 'end', end: true }];
   page = 0;
   $('title').textContent = b.title;
   $('library').classList.add('hidden');
@@ -428,6 +592,7 @@ function render() {
   stage.innerHTML = svgOf(pg.scene);
   textEl.innerHTML = '';
   spans = []; target = [];
+  textEl.classList.toggle('long', pg.text.length > 45);
   $('pageNum').textContent = pg.end ? '⭐' : `${page + 1} / ${pages.length - 1}`;
   $('prev').disabled = page === 0;
   const nx = $('next'); nx.disabled = true; nx.classList.remove('glow');
@@ -442,7 +607,7 @@ function render() {
     nx.disabled = false; nx.textContent = '↺'; nx.setAttribute('aria-label', 'לקרוא שוב');
     return;
   }
-  pg.text.split(/\s+/).forEach((t, i) => {
+  pg.text.split(/\s+/).filter(t => norm(t).length).forEach((t, i) => {
     const s = document.createElement('span');
     s.className = 'w' + (i === 0 ? ' next' : '');
     s.textContent = t;
