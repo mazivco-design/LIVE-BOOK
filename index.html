@@ -53,6 +53,7 @@ button{font-family:inherit;cursor:pointer}
 @keyframes nudge{50%{transform:translateX(-8px) scale(1.08)}}
 .status{min-height:1.5em;font-size:19px;opacity:.75;text-align:center}
 .book .cover *{animation:none !important}
+.book .cover .petal{transform:scale(1)}
 .tester-bar{max-width:960px;margin:34px auto 0;text-align:center}
 .tester-btn{background:#fff;border:2px dashed #c9b8a6;border-radius:16px;padding:10px 18px;font-size:17px;color:var(--ink)}
 .tester-btn.on{background:#3a2e2a;color:#fff;border-style:solid;border-color:#3a2e2a}
@@ -136,6 +137,142 @@ button{font-family:inherit;cursor:pointer}
 @keyframes netdrop{0%{opacity:1;transform:translateY(-230px)}100%{opacity:1;transform:translateY(0)}}
 .alive .f8 .wolf-inner{animation:wiggle .3s ease-in-out 1.6s 8}
 .alive .f9 .deer-inner{animation:hop .7s ease-in-out infinite}
+/* ================= מנוע אנימציה מורחב ================= */
+.cam{transform-box:fill-box;transform-origin:50% 40%}
+.pt{transform-box:fill-box;transform-origin:center}
+@keyframes popin{0%{transform:scale(0)}70%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes fadein{to{opacity:1}}
+@keyframes rainfall{to{transform:translateY(270px)}}
+@keyframes bubbleup{0%{transform:translate(0,0);opacity:0}10%{opacity:1}100%{transform:translate(var(--dx),-250px);opacity:0}}
+@keyframes puff{0%{transform:translate(0,0) scale(.3);opacity:.95}100%{transform:translate(var(--dx),var(--dy)) scale(2.4);opacity:0}}
+@keyframes notes{0%{transform:translate(0,0);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx),-150px);opacity:0}}
+@keyframes shoot{0%{transform:translate(0,0);opacity:0}10%{opacity:1}60%,100%{transform:translate(-240px,100px);opacity:0}}
+@keyframes twk{from{opacity:.25}to{opacity:1}}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes wave{from{transform:rotate(-150deg)}to{transform:rotate(-110deg)}}
+.twk{animation:twk 1.2s ease-in-out infinite alternate}
+
+/* ---- הזרע הקטן ---- */
+.girl-inner,.boy-inner,.alien-inner{transform-box:fill-box;transform-origin:center bottom}
+.arm,.aarm{transform-box:fill-box;transform-origin:50% 0%}
+.a1 .arm{transform:rotate(-60deg)}
+.alive .a1 .arm{animation:release .6s ease-in-out .3s 1}
+@keyframes release{0%,100%{transform:rotate(-60deg)}50%{transform:rotate(-38deg)}}
+.alive .a1 .seed{animation:seedfall .7s ease-in .7s forwards}
+@keyframes seedfall{70%{transform:translateY(62px)}85%{transform:translateY(55px)}100%{transform:translateY(62px)}}
+.mound,.sprout,.bud{transform-box:fill-box;transform-origin:50% 100%}
+.a1 .mound{transform:scale(0)}
+.alive .a1 .mound{animation:popin .5s ease-out 1.4s forwards}
+.alive .a1 .girl-inner{animation:hop .5s ease-in-out 1.9s 2}
+.alive .a2 .sky{animation:skydark 1.5s ease forwards}
+@keyframes skydark{to{fill:#9aa5b8}}
+.a2 .rclouds{transform:translateX(-320px)}
+.alive .a2 .rclouds{animation:cloudsin 1.6s ease-out forwards}
+@keyframes cloudsin{from{transform:translateX(-320px)}to{transform:translateX(0)}}
+.umb{transform-box:fill-box;transform-origin:50% 100%}
+.a2 .umb{transform:scaleX(.12)}
+.alive .a2 .umb{animation:umbopen .6s ease-out 1.2s forwards}
+@keyframes umbopen{from{transform:scaleX(.12)}70%{transform:scaleX(1.1)}to{transform:scaleX(1)}}
+.a2 .sprout{transform:scale(0)}
+.alive .a2 .sprout{animation:popin .7s ease-out 3.2s forwards}
+.ripple{opacity:0;transform-box:fill-box;transform-origin:center}
+.alive .a2 .ripple{animation:ripple 1.3s ease-out infinite}
+@keyframes ripple{0%{opacity:.9;transform:scale(.3)}100%{opacity:0;transform:scale(2.4)}}
+.alive .a3 .sky{animation:skyday 2.2s ease forwards}
+@keyframes skyday{to{fill:#bde0fe}}
+.a3 .sunrise{transform:translateY(190px)}
+.alive .a3 .sunrise{animation:sunup 2.2s ease-out forwards}
+@keyframes sunup{from{transform:translateY(190px)}to{transform:translateY(0)}}
+.a3 .stem{stroke-dasharray:1;stroke-dashoffset:1;opacity:0}
+.alive .a3 .stem{animation:drawin 1.6s ease-out 1.1s forwards}
+@keyframes drawin{0%{opacity:1;stroke-dashoffset:1}100%{opacity:1;stroke-dashoffset:0}}
+.leaf{transform-box:fill-box}.ll{transform-origin:100% 50%}.lr{transform-origin:0% 50%}
+.a3 .leaf,.a3 .bud{transform:scale(0)}
+.alive .a3 .ll{animation:popin .5s ease-out 1.9s forwards}
+.alive .a3 .lr{animation:popin .5s ease-out 2.3s forwards}
+.alive .a3 .bud{animation:popin .5s ease-out 2.7s forwards}
+.alive .a3 .girl-inner{animation:hop .5s ease-in-out 2.9s 3}
+.alive .a4 .cam{animation:zoomin 2.4s ease-in-out forwards}
+@keyframes zoomin{to{transform:scale(1.55)}}
+.petal{transform-box:fill-box;transform-origin:50% 100%;transform:scale(.3)}
+.alive .a4 .petal{animation:petalopen .7s ease-out forwards}
+@keyframes petalopen{0%{transform:scale(.3)}70%{transform:scale(1.18)}100%{transform:scale(1)}}
+.alive .a4 .bee{animation:beeloop 3s ease-in-out 1.6s infinite}
+@keyframes beeloop{0%,100%{transform:translate(0,0)}25%{transform:translate(-40px,-32px)}50%{transform:translate(-82px,4px)}75%{transform:translate(-40px,26px)}}
+.alive .a4 .girl-inner{animation:hop .6s ease-in-out 2.2s infinite}
+
+/* ---- נוני בים ---- */
+.weed{transform-box:fill-box;transform-origin:50% 100%;animation:sway 2.6s ease-in-out infinite}
+.ray{animation:twk 2.5s ease-in-out infinite alternate}
+.fmove,.fish-inner,.whale-inner,.octo-inner,.starfish{transform-box:fill-box;transform-origin:center}
+.ftail{transform-box:fill-box;transform-origin:100% 50%;animation:tailwag .3s ease-in-out infinite alternate}
+@keyframes tailwag{from{transform:scaleX(1) rotate(-12deg)}to{transform:scaleX(.7) rotate(12deg)}}
+.alive .s1 .fmove{animation:swim8 5s ease-in-out infinite}
+@keyframes swim8{0%{transform:translate(0,0) scaleX(1)}20%{transform:translate(55px,-22px) scaleX(1)}25%{transform:translate(55px,-22px) scaleX(-1)}50%{transform:translate(0,0) scaleX(-1)}70%{transform:translate(-55px,22px) scaleX(-1)}75%{transform:translate(-55px,22px) scaleX(1)}100%{transform:translate(0,0) scaleX(1)}}
+.tent{transform-box:fill-box;transform-origin:50% 0%;animation:tentwave 1.1s ease-in-out infinite alternate}
+@keyframes tentwave{from{transform:rotate(-15deg)}to{transform:rotate(15deg)}}
+.alive .s2 .ofill,.alive .s4 .ofill{animation:ocolF 3s ease-in-out infinite}
+.alive .s2 .ostroke,.alive .s4 .ostroke{animation:ocolS 3s ease-in-out infinite}
+@keyframes ocolF{0%,100%{fill:#b5179e}33%{fill:#f72585}66%{fill:#7209b7}}
+@keyframes ocolS{0%,100%{stroke:#b5179e}33%{stroke:#f72585}66%{stroke:#7209b7}}
+.alive .s2 .octo-inner,.alive .s4 .octo-inner{animation:bob 1.4s ease-in-out infinite}
+.alive .s2 .fmove{animation:bob 1.2s ease-in-out infinite}
+.wtail{transform-box:fill-box;transform-origin:100% 50%;animation:wtail 1.4s ease-in-out infinite alternate}
+@keyframes wtail{from{transform:rotate(-12deg)}to{transform:rotate(12deg)}}
+.alive .s3 .wglide{animation:glide 6s ease-in-out forwards}
+@keyframes glide{to{transform:translateX(-150px)}}
+.spout{opacity:0;transform-box:fill-box;transform-origin:50% 100%}
+.alive .s3 .spout{animation:spout 1.8s ease-out 1.4s infinite}
+@keyframes spout{0%{opacity:0;transform:scaleY(.2)}30%{opacity:1;transform:scaleY(1.15)}100%{opacity:0;transform:scaleY(1) translateY(-12px)}}
+.alive .s3 .fish-inner{animation:wiggle .25s ease-in-out 10}
+.alive .s4 .fmove{animation:orbit 2.6s linear infinite}
+@keyframes orbit{from{transform:rotate(0deg) translateX(32px) rotate(0deg)}to{transform:rotate(360deg) translateX(32px) rotate(-360deg)}}
+.alive .s4 .starfish{animation:sunspin 3s linear infinite}
+.alive .s4 .cam{animation:bob 2s ease-in-out infinite}
+
+/* ---- יוני טס לירח ---- */
+.flame{transform-box:fill-box;transform-origin:50% 0%;opacity:0}
+.doorpanel{transform-box:fill-box;transform-origin:0% 50%;transform:scaleX(0)}
+.alive .c1 .walker{animation:walkin 2.2s ease-in-out forwards}
+@keyframes walkin{65%{transform:translateX(92px);opacity:1}100%{transform:translateX(100px);opacity:0}}
+.alive .c1 .boy-inner{animation:stomp .3s ease-in-out 7}
+.alive .c1 .doorpanel{animation:doorclose .45s ease-in 2.3s forwards}
+@keyframes doorclose{to{transform:scaleX(1)}}
+.alive .c1 .rwin{animation:winlight .3s ease-in-out 2.8s 5 alternate forwards}
+@keyframes winlight{to{fill:#ffd166}}
+.alive .c1 .ant-light{animation:twk .4s ease-in-out infinite alternate}
+.c2 .doorpanel{transform:scaleX(1)}
+.c2 .rwin{fill:#ffd166}
+.alive .c2 .flame{animation:flameon .15s ease-in-out .3s infinite alternate}
+@keyframes flameon{from{opacity:1;transform:scaleY(.8)}to{opacity:1;transform:scaleY(1.35)}}
+.alive .c2 .shake{animation:rshake .08s linear 22}
+@keyframes rshake{25%{transform:translateX(-2.5px)}75%{transform:translateX(2.5px)}}
+.alive .c2 .launch{animation:launch 3s ease-in 1.7s forwards}
+@keyframes launch{to{transform:translateY(-55px)}}
+.alive .c2 .world{animation:worlddown 3s ease-in 1.7s forwards}
+@keyframes worlddown{to{transform:translateY(330px)}}
+.alive .c2 .sky{animation:skyspace 3s ease-in 1.7s forwards}
+@keyframes skyspace{to{fill:#0b132b}}
+.stars{opacity:0}
+.c3 .doorpanel{transform:scaleX(1)}
+.alive .c2 .stars{animation:fadein 1.5s ease 3.4s forwards}
+.c3 .descend{transform:translateY(-75px)}
+.c3 .flame{opacity:1}
+.alive .c3 .descend{animation:descend 1.7s ease-out forwards}
+@keyframes descend{to{transform:translateY(0)}}
+.alive .c3 .flame{animation:flameland 1.9s ease-out forwards}
+@keyframes flameland{0%,85%{opacity:1}100%{opacity:0}}
+.moonboy{opacity:0}
+.alive .c3 .moonboy{animation:moonhop 4.2s ease-in-out 2.2s forwards}
+@keyframes moonhop{0%{opacity:1;transform:translate(0,0)}25%{transform:translate(28px,-75px)}50%{transform:translate(56px,0)}75%{transform:translate(84px,-75px)}100%{opacity:1;transform:translate(112px,0)}}
+.c4 .rise{transform:translateY(62px)}
+.alive .c4 .rise{animation:riseup 1.2s ease-out .3s forwards}
+@keyframes riseup{0%{transform:translateY(62px)}70%{transform:translateY(-8px)}100%{transform:translateY(0)}}
+.ant{transform-box:fill-box;transform-origin:50% 100%;animation:antwob .5s ease-in-out infinite alternate}
+@keyframes antwob{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
+.alive .c4 .aarm{animation:wave .45s ease-in-out 1.5s infinite alternate}
+.alive .c4 .arm{animation:wave .5s ease-in-out 2.1s infinite alternate}
+.alive .c4 .alien-inner{animation:hop .6s ease-in-out 1.5s 2}
 </style>
 </head>
 <body>
@@ -211,6 +348,42 @@ const BOOKS = [
       { text: 'הַצַּיָּדִים פָּתְחוּ אֶת הַמַּלְכֹּדֶת, וְהַצְּבִי בָּרַח!', scene: 'f7' },
       { text: 'הָעוֹרֵב הוֹבִיל אֶת הַצַּיָּדִים אֶל הַזְּאֵב, וְהֵם תָּפְסוּ אוֹתוֹ.', scene: 'f8' },
       { text: 'חָבֵר אֲמִתִּי עוֹזֵר גַּם בְּשָׁעָה קָשָׁה.', scene: 'f9' }
+    ]
+  },
+  {
+    id: 'seed',
+    title: 'הַזֶּרַע הַקָּטָן',
+    cover: 'a4',
+    endScene: 'a4',
+    pages: [
+      { text: 'דָּנָה שָׁתְלָה זֶרַע קָטָן בָּאֲדָמָה.', scene: 'a1' },
+      { text: 'יָרַד גֶּשֶׁם, וְהַזֶּרַע שָׁתָה מַיִם.', scene: 'a2' },
+      { text: 'הַשֶּׁמֶשׁ זָרְחָה, וְהַנֶּבֶט גָּדַל וְגָדַל.', scene: 'a3' },
+      { text: 'בַּסּוֹף צָמַח פֶּרַח גָּדוֹל וְיָפֶה!', scene: 'a4' }
+    ]
+  },
+  {
+    id: 'noni',
+    title: 'נוֹנִי בַּיָּם',
+    cover: 's2',
+    endScene: 's4',
+    pages: [
+      { text: 'נוֹנִי הוּא דָּג קָטָן וְכָתֹם.', scene: 's1' },
+      { text: 'נוֹנִי פּוֹגֵשׁ תְּמָנוּן עִם שְׁמוֹנֶה רַגְלַיִם.', scene: 's2' },
+      { text: 'לִוְיָתָן עֲנָק שׁוֹחֶה לְיָדָם.', scene: 's3' },
+      { text: 'כֻּלָּם רוֹקְדִים בְּיַחַד בַּיָּם!', scene: 's4' }
+    ]
+  },
+  {
+    id: 'yoni-moon',
+    title: 'יוֹנִי טָס לַיָּרֵחַ',
+    cover: 'c1',
+    endScene: 'c4',
+    pages: [
+      { text: 'יוֹנִי נִכְנַס לַחֲלָלִית שֶׁלּוֹ.', scene: 'c1' },
+      { text: 'הַחֲלָלִית רוֹעֶדֶת, וְטָסָה לַשָּׁמַיִם!', scene: 'c2' },
+      { text: 'יוֹנִי נוֹחֵת עַל הַיָּרֵחַ.', scene: 'c3' },
+      { text: 'חַיְזָר יָרֹק אוֹמֵר לוֹ שָׁלוֹם!', scene: 'c4' }
     ]
   }
 ];
@@ -405,14 +578,334 @@ const SCENES = {
   f8: () => `${forest()}${wolf(185, 175)}${net(105, 95)}${hunter(330, 175, 1, -1)}${raven(300, 75, .9, -1)}`,
   f9: () => `${forest()}${deer(170, 175)}${raven(275, 110, 1.1, -1)}${heart(110, 90, 14, .2)}${heart(300, 170, 12, .5)}${heart(220, 60, 10, .8)}${heart(345, 95, 11, 1.1)}`
 };
-const svgOf = (scene) => `<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice"><g class="scene ${scene}">${SCENES[scene]()}</g></svg>`;
+
+/* ================= דמויות וציורים לספרים החדשים ================= */
+// ---- גינה ----
+function garden(sky) {
+  return `<rect class="sky" width="400" height="300" fill="${sky}"/>
+    <ellipse cx="300" cy="58" rx="36" ry="12" fill="#fff" opacity=".85"/>
+    <rect y="228" width="400" height="12" fill="#8fca7f"/><rect y="236" width="400" height="64" fill="#9c6b47"/>
+    <g fill="#7f5539"><ellipse cx="60" cy="262" rx="6" ry="3"/><ellipse cx="330" cy="270" rx="7" ry="3"/><ellipse cx="150" cy="282" rx="5" ry="2"/></g>`;
+}
+function girl(x, y, s = 1, f = 1) {
+  return `<g transform="translate(${x},${y}) scale(${s * f},${s})"><g class="girl-inner">
+    <rect x="-10" y="18" width="8" height="40" rx="3" fill="#3d405b"/><rect x="2" y="18" width="8" height="40" rx="3" fill="#3d405b"/>
+    <ellipse cx="-6" cy="59" rx="8" ry="4" fill="#222"/><ellipse cx="7" cy="59" rx="8" ry="4" fill="#222"/>
+    <rect x="-20" y="-22" width="7" height="30" rx="3" fill="#f4c7a1"/>
+    <polygon points="-13,-27 13,-27 24,22 -24,22" fill="#e76f51"/>
+    <circle cx="-17" cy="-50" r="8" fill="#6b3e26"/><circle cx="17" cy="-50" r="8" fill="#6b3e26"/>
+    <circle cx="0" cy="-44" r="17" fill="#f4c7a1"/>
+    <path d="M-17 -46 Q-16 -64 0 -63 Q16 -64 17 -46 Q8 -56 -17 -46Z" fill="#6b3e26"/>
+    <g class="eyes"><circle cx="-6" cy="-44" r="2.3" fill="#333"/><circle cx="6" cy="-44" r="2.3" fill="#333"/></g>
+    <circle cx="-10" cy="-37" r="3" fill="#ffadad" opacity=".7"/><circle cx="10" cy="-37" r="3" fill="#ffadad" opacity=".7"/>
+    <path d="M-5 -35 Q0 -31 5 -35" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <g class="arm"><rect x="12" y="-22" width="7" height="30" rx="3" fill="#f4c7a1"/></g>
+  </g></g>`;
+}
+function umbrella(x, y) {
+  return `<g class="umb"><path d="M${x} ${y} L${x} ${y + 52} Q${x} ${y + 60} ${x - 7} ${y + 58}" stroke="#333" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M${x - 42} ${y} Q${x - 42} ${y - 40} ${x} ${y - 40} Q${x + 42} ${y - 40} ${x + 42} ${y} Q${x + 31} ${y - 8} ${x + 21} ${y} Q${x + 10} ${y - 8} ${x} ${y} Q${x - 10} ${y - 8} ${x - 21} ${y} Q${x - 31} ${y - 8} ${x - 42} ${y}Z" fill="#8338ec"/>
+    <path d="M${x} ${y - 40} L${x} ${y - 48}" stroke="#333" stroke-width="3"/></g>`;
+}
+function darkCloud(x, y, s) {
+  return `<g transform="translate(${x},${y}) scale(${s})" fill="#6c757d"><ellipse cx="0" cy="0" rx="40" ry="18"/><ellipse cx="-22" cy="4" rx="24" ry="14"/><ellipse cx="24" cy="4" rx="26" ry="15"/><ellipse cx="4" cy="-12" rx="22" ry="16"/></g>`;
+}
+function sprout(x) {
+  return `<g class="sprout"><path d="M${x} 236 L${x} 220" stroke="#40916c" stroke-width="3"/>
+    <ellipse cx="${x - 6}" cy="219" rx="6" ry="3" fill="#52b788"/><ellipse cx="${x + 6}" cy="219" rx="6" ry="3" fill="#52b788"/></g>`;
+}
+function bee(x, y) {
+  return `<g transform="translate(${x},${y})"><g class="bee">
+    <g class="wing wl"><ellipse cx="-4" cy="-9" rx="6" ry="9" fill="#e0fbfc" opacity=".9"/></g>
+    <g class="wing wr"><ellipse cx="4" cy="-9" rx="6" ry="9" fill="#e0fbfc" opacity=".9"/></g>
+    <ellipse cx="0" cy="0" rx="11" ry="7.5" fill="#ffd166"/>
+    <rect x="-4" y="-7" width="3" height="14" fill="#333"/><rect x="3" y="-7" width="3" height="14" fill="#333"/>
+    <circle cx="9" cy="-2" r="1.6" fill="#222"/></g></g>`;
+}
+function bigBloom(cx, cy) {
+  let petals = '';
+  for (let i = 0; i < 8; i++) {
+    petals += `<g transform="rotate(${i * 45} ${cx} ${cy})"><g class="petal" style="animation-delay:${(.7 + i * .13).toFixed(2)}s">
+      <ellipse cx="${cx}" cy="${cy - 20}" rx="10" ry="20" fill="${i % 2 ? '#ff70a6' : '#ff9770'}"/></g></g>`;
+  }
+  return `<path d="M${cx} 236 C${cx - 8} 205 ${cx + 12} 175 ${cx} ${cy}" stroke="#2d6a4f" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <ellipse cx="${cx - 16}" cy="192" rx="15" ry="6" fill="#52b788" transform="rotate(-25 ${cx - 16} 192)"/>
+    <ellipse cx="${cx + 15}" cy="172" rx="15" ry="6" fill="#52b788" transform="rotate(25 ${cx + 15} 172)"/>
+    ${petals}<circle cx="${cx}" cy="${cy}" r="11" fill="#ffd670"/>`;
+}
+
+// ---- ים ----
+function seaBg() {
+  return `<rect width="400" height="300" fill="#48cae4"/><rect y="140" width="400" height="160" fill="#0096c7" opacity=".45"/>
+    <rect y="215" width="400" height="85" fill="#0077b6" opacity=".4"/>
+    <polygon class="ray" points="70,0 100,0 170,300 120,300" fill="#fff" opacity=".12"/>
+    <polygon class="ray" points="220,0 240,0 300,300 265,300" fill="#fff" opacity=".1" style="animation-delay:-1.2s"/>
+    <path d="M0 250 Q100 238 200 249 T400 246 V300 H0Z" fill="#f6d6a8"/>
+    <g fill="#e9c46a"><ellipse cx="60" cy="268" rx="5" ry="2"/><ellipse cx="300" cy="275" rx="6" ry="2"/></g>`;
+}
+function weed(x, h, c, d = 0) {
+  return `<path class="weed" style="animation-delay:${d}s" d="M${x} 252 q-12 ${-h / 3} 0 ${-h / 1.6} q12 ${-h / 4} 0 ${-h}" stroke="${c}" stroke-width="7" fill="none" stroke-linecap="round"/>`;
+}
+function rock(x, y, r) { return `<ellipse cx="${x}" cy="${y}" rx="${r * 1.4}" ry="${r}" fill="#6c757d"/><ellipse cx="${x - r * .3}" cy="${y - r * .3}" rx="${r * .5}" ry="${r * .3}" fill="#adb5bd"/>`; }
+function starfish(x, y, r) {
+  let pts = '';
+  for (let i = 0; i < 10; i++) {
+    const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * .45 : r;
+    pts += `${(x + Math.cos(a) * rr).toFixed(1)},${(y + Math.sin(a) * rr).toFixed(1)} `;
+  }
+  return `<polygon class="starfish" points="${pts}" fill="#f4845f" stroke="#e76f51" stroke-width="2" stroke-linejoin="round"/>`;
+}
+function fish(x, y, s = 1, f = 1, c = '#ff8c42', c2 = '#f3722c') {
+  return `<g transform="translate(${x},${y}) scale(${s * f},${s})"><g class="fmove"><g class="fish-inner">
+    <g class="ftail"><polygon points="-22,0 -44,-16 -38,0 -44,16" fill="${c2}"/></g>
+    <ellipse cx="0" cy="0" rx="27" ry="17" fill="${c}"/>
+    <path d="M-4 -15 Q3 0 -4 15" stroke="#fff" stroke-width="5" fill="none"/>
+    <polygon points="-6,-15 5,-27 12,-14" fill="${c2}"/>
+    <circle cx="13" cy="-4" r="6.5" fill="#fff"/><circle cx="15" cy="-4" r="3.2" fill="#222"/>
+    <path d="M22 5 Q25 7 22 9" stroke="#222" stroke-width="1.6" fill="none"/>
+  </g></g></g>`;
+}
+function octopus(x, y, s = 1) {
+  let t = '';
+  for (let i = 0; i < 8; i++) {
+    const x0 = -28 + i * 8, d = i % 2 ? 7 : -7;
+    t += `<g class="tent" style="animation-delay:-${(i * .14).toFixed(2)}s"><path class="ostroke" d="M${x0} -4 q${d} 18 0 36 q${-d} 16 ${d / 2} 30" stroke="#b5179e" stroke-width="8" fill="none" stroke-linecap="round"/></g>`;
+  }
+  return `<g transform="translate(${x},${y}) scale(${s})"><g class="octo-inner">${t}
+    <ellipse class="ofill" cx="0" cy="-28" rx="36" ry="32" fill="#b5179e"/>
+    <g fill="#fff" opacity=".25"><circle cx="-14" cy="-46" r="4"/><circle cx="10" cy="-52" r="3"/><circle cx="20" cy="-40" r="3.5"/></g>
+    <g class="eyes"><circle cx="-12" cy="-28" r="9" fill="#fff"/><circle cx="12" cy="-28" r="9" fill="#fff"/>
+      <circle cx="-10" cy="-27" r="4.5" fill="#222"/><circle cx="14" cy="-27" r="4.5" fill="#222"/></g>
+    <path d="M-8 -12 Q0 -5 8 -12" stroke="#222" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  </g></g>`;
+}
+// לוויתן: f = -1 פונה שמאלה
+function whale(x, y, s = 1, f = 1) {
+  return `<g transform="translate(${x},${y}) scale(${s * f},${s})"><g class="whale-inner">
+    <g transform="translate(-104,4)"><g class="wtail"><path d="M0 0 L-46 -34 Q-36 0 -46 36 Z" fill="#2f6fd6"/></g></g>
+    <path d="M-110 10 Q-100 -60 0 -60 Q90 -60 110 0 Q100 40 0 45 Q-60 48 -110 10Z" fill="#3a86ff"/>
+    <path d="M-60 30 Q0 50 92 16 Q62 40 0 44 Q-40 46 -60 30Z" fill="#a9d6ff"/>
+    <ellipse cx="8" cy="26" rx="24" ry="9" fill="#2f6fd6" transform="rotate(25 8 26)"/>
+    <circle cx="70" cy="-12" r="6.5" fill="#222"/><circle cx="72" cy="-14" r="2" fill="#fff"/>
+    <path d="M78 10 Q90 14 100 6" stroke="#1d3557" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <g class="spout" transform="translate(40,-62)"><g stroke="#e0fbfc" stroke-width="5" stroke-linecap="round" fill="none">
+      <path d="M0 0 Q-6 -24 -22 -34"/><path d="M0 0 L0 -40"/><path d="M0 0 Q6 -24 22 -34"/></g>
+      <g fill="#e0fbfc"><circle cx="-24" cy="-36" r="4"/><circle cx="0" cy="-44" r="4.5"/><circle cx="24" cy="-36" r="4"/></g></g>
+  </g></g>`;
+}
+
+// ---- חלל ----
+function starField(n) {
+  let s = '';
+  for (let i = 0; i < n; i++) {
+    const h = k => { const v = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453; return v - Math.floor(v); };
+    const x = (h(1) * 400).toFixed(1), y = (h(2) * 205).toFixed(1), r = (1 + h(3) * 1.4).toFixed(1);
+    s += `<circle class="twk" style="animation-delay:-${(i % 7) * .3}s" cx="${x}" cy="${y}" r="${r}" fill="#fff"/>`;
+  }
+  return s;
+}
+function rocket(x, y, s = 1) {
+  return `<g transform="translate(${x},${y}) scale(${s})"><g class="rocket-inner">
+    <g class="flame"><polygon points="-15,0 0,44 15,0" fill="#ffb703"/><polygon points="-8,0 0,28 8,0" fill="#fb8500"/></g>
+    <polygon points="-22,-42 -46,0 -22,-6" fill="#e63946"/><polygon points="22,-42 46,0 22,-6" fill="#e63946"/>
+    <path d="M-22 -6 L-22 -100 Q-22 -140 0 -160 Q22 -140 22 -100 L22 -6Z" fill="#f1faee" stroke="#a8dadc" stroke-width="2"/>
+    <path d="M-17 -128 Q-12 -146 0 -160 Q12 -146 17 -128Z" fill="#e63946"/>
+    <rect x="-22" y="-34" width="44" height="6" fill="#e63946"/>
+    <circle class="rwin" cx="0" cy="-98" r="11" fill="#457b9d" stroke="#1d3557" stroke-width="3"/>
+    <rect x="-10" y="-62" width="20" height="26" rx="4" fill="#1d3557"/>
+    <rect class="doorpanel" x="-10" y="-62" width="20" height="26" rx="4" fill="#dee2e6" stroke="#adb5bd" stroke-width="1.5"/>
+  </g></g>`;
+}
+function boy(x, y, s = 1, f = 1) {
+  return `<g transform="translate(${x},${y}) scale(${s * f},${s})"><g class="boy-inner">
+    <rect x="-24" y="-26" width="12" height="34" rx="4" fill="#adb5bd"/>
+    <rect x="-22" y="-22" width="8" height="30" rx="4" fill="#f8f9fa" stroke="#ced4da" stroke-width="1.5"/>
+    <rect x="-11" y="16" width="9" height="38" rx="4" fill="#f8f9fa" stroke="#ced4da" stroke-width="1.5"/>
+    <rect x="2" y="16" width="9" height="38" rx="4" fill="#f8f9fa" stroke="#ced4da" stroke-width="1.5"/>
+    <rect x="-13" y="50" width="13" height="10" rx="3" fill="#6c757d"/><rect x="0" y="50" width="13" height="10" rx="3" fill="#6c757d"/>
+    <rect x="-16" y="-26" width="32" height="46" rx="10" fill="#f8f9fa" stroke="#ced4da" stroke-width="2"/>
+    <circle cx="6" cy="-12" r="4" fill="#e63946"/>
+    <circle cx="0" cy="-46" r="21" fill="#f8f9fa" stroke="#ced4da" stroke-width="2"/>
+    <circle cx="2" cy="-45" r="14" fill="#f4c7a1"/>
+    <g class="eyes"><circle cx="-3" cy="-47" r="2" fill="#333"/><circle cx="7" cy="-47" r="2" fill="#333"/></g>
+    <path d="M-1 -40 Q2 -37 6 -40" stroke="#333" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <circle cx="2" cy="-45" r="15" fill="#bde0fe" opacity=".3"/>
+    <path d="M-8 -54 Q-4 -58 2 -58" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <g class="arm"><rect x="14" y="-22" width="8" height="30" rx="4" fill="#f8f9fa" stroke="#ced4da" stroke-width="1.5"/><circle cx="18" cy="10" r="5" fill="#adb5bd"/></g>
+  </g></g>`;
+}
+function alien(x, y, s = 1) {
+  return `<g transform="translate(${x},${y}) scale(${s})"><g class="alien-inner">
+    <rect x="-24" y="2" width="7" height="24" rx="3" fill="#57cc99"/>
+    <rect x="-11" y="30" width="8" height="30" rx="3" fill="#57cc99"/><rect x="3" y="30" width="8" height="30" rx="3" fill="#57cc99"/>
+    <ellipse cx="0" cy="16" rx="20" ry="22" fill="#80ed99"/><ellipse cx="0" cy="20" rx="11" ry="12" fill="#c7f9cc"/>
+    <g class="ant"><line x1="-8" y1="-38" x2="-17" y2="-60" stroke="#57cc99" stroke-width="3"/><circle cx="-17" cy="-61" r="5" fill="#ffd166"/></g>
+    <g class="ant" style="animation-delay:-.25s"><line x1="8" y1="-38" x2="17" y2="-60" stroke="#57cc99" stroke-width="3"/><circle cx="17" cy="-61" r="5" fill="#ffd166"/></g>
+    <circle cx="0" cy="-20" r="22" fill="#80ed99"/>
+    <g class="eyes"><circle cx="0" cy="-23" r="10" fill="#fff"/><circle cx="2" cy="-23" r="5" fill="#222"/><circle cx="4" cy="-25" r="1.6" fill="#fff"/></g>
+    <path d="M-8 -8 Q0 -1 8 -8" stroke="#2d6a4f" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <g class="aarm"><rect x="16" y="2" width="7" height="26" rx="3" fill="#57cc99"/></g>
+  </g></g>`;
+}
+function earthBg() {
+  return `<rect class="sky" width="400" height="300" fill="#8ecae6"/><g class="stars">${starField(28)}</g>
+    <g class="world">
+      <ellipse cx="80" cy="70" rx="34" ry="12" fill="#fff" opacity=".9"/><ellipse cx="320" cy="110" rx="40" ry="13" fill="#fff" opacity=".85"/>
+      <g stroke="#6c757d" stroke-width="3" fill="none"><line x1="275" y1="235" x2="275" y2="80"/><line x1="295" y1="235" x2="295" y2="80"/>
+        ${[0, 1, 2, 3, 4, 5].map(i => `<line x1="275" y1="${225 - i * 26}" x2="295" y2="${212 - i * 26}"/>`).join('')}<line x1="275" y1="95" x2="250" y2="95"/></g>
+      <circle class="ant-light" cx="285" cy="76" r="5" fill="#e63946"/>
+      <rect y="232" width="400" height="68" fill="#80b918"/><rect x="150" y="230" width="100" height="8" rx="2" fill="#adb5bd"/>
+    </g>`;
+}
+function moonBg() {
+  return `<rect width="400" height="300" fill="#0b132b"/>${starField(36)}
+    <circle cx="335" cy="78" r="26" fill="#4895ef"/><path d="M320 66 q10 -6 16 4 q-4 10 -14 6z M338 86 q8 -2 10 6 q-8 6 -12 0z" fill="#70e000"/>
+    <path d="M0 226 Q200 204 400 226 V300 H0Z" fill="#adb5bd"/>
+    <g fill="#8d99ae"><ellipse cx="60" cy="250" rx="22" ry="6"/><ellipse cx="330" cy="262" rx="28" ry="7"/><ellipse cx="190" cy="280" rx="16" ry="4"/></g>`;
+}
+
+Object.assign(SCENES, {
+  // הזרע הקטן
+  a1: () => `${garden('#bde0fe')}${sun(60, 60)}${girl(150, 175)}<circle class="seed" cx="192" cy="170" r="4.5" fill="#6f4518"/><ellipse class="mound" cx="192" cy="236" rx="18" ry="7" fill="#7f5539"/>`,
+  a2: () => `${garden('#bde0fe')}<g class="rclouds">${darkCloud(90, 55, 1)}${darkCloud(230, 45, 1.2)}${darkCloud(350, 65, .9)}</g>
+    ${girl(90, 175)}${umbrella(112, 108)}<ellipse cx="250" cy="236" rx="18" ry="7" fill="#7f5539"/>${sprout(250)}
+    <ellipse class="ripple" cx="320" cy="242" rx="10" ry="3" fill="none" stroke="#e3f2fd" stroke-width="2" style="animation-delay:1.6s"/>
+    <ellipse class="ripple" cx="190" cy="250" rx="10" ry="3" fill="none" stroke="#e3f2fd" stroke-width="2" style="animation-delay:2.1s"/>
+    <ellipse class="ripple" cx="360" cy="262" rx="10" ry="3" fill="none" stroke="#e3f2fd" stroke-width="2" style="animation-delay:2.5s"/>`,
+  a3: () => `<rect class="sky" width="400" height="300" fill="#ffd6a5"/><g class="sunrise">${sun(320, 90)}</g>
+    <rect y="228" width="400" height="12" fill="#8fca7f"/><rect y="236" width="400" height="64" fill="#9c6b47"/>
+    <ellipse cx="200" cy="236" rx="18" ry="7" fill="#7f5539"/>
+    <path class="stem" pathLength="1" d="M200 236 C192 205 212 175 200 128" stroke="#2d6a4f" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <g class="leaf ll"><ellipse cx="185" cy="194" rx="15" ry="6" fill="#52b788" transform="rotate(-25 185 194)"/></g>
+    <g class="leaf lr"><ellipse cx="215" cy="168" rx="15" ry="6" fill="#52b788" transform="rotate(25 215 168)"/></g>
+    <circle class="bud" cx="200" cy="124" r="9" fill="#f4a261"/>${girl(105, 175)}`,
+  a4: () => `${garden('#bde0fe')}${sun(60, 60)}${bigBloom(200, 120)}${bee(262, 96)}${girl(95, 175)}`,
+  // נוני בים
+  s1: () => `${seaBg()}${weed(40, 90, '#2a9d8f')}${weed(70, 60, '#52b788', -.8)}${weed(350, 100, '#2a9d8f', -.4)}${rock(320, 252, 14)}${starfish(110, 258, 12)}${fish(200, 145, 1.3)}`,
+  s2: () => `${seaBg()}${weed(30, 80, '#2a9d8f')}${weed(370, 95, '#52b788', -.6)}${rock(180, 254, 12)}${fish(110, 125)}${octopus(265, 182)}`,
+  s3: () => `${seaBg()}${weed(40, 95, '#2a9d8f')}${weed(70, 70, '#52b788', -.5)}${fish(85, 210, .8)}<g class="wglide">${whale(300, 135, 1, -1)}</g>`,
+  s4: () => `${seaBg()}${weed(30, 85, '#2a9d8f')}${weed(375, 90, '#52b788', -.7)}${starfish(330, 258, 13)}${starfish(70, 262, 10)}${octopus(270, 180, .85)}${fish(130, 120)}${fish(185, 175, .7, -1, '#ffd166', '#f9c74f')}`,
+  // יוני טס לירח
+  c1: () => `${earthBg()}${rocket(205, 235, .85)}<g class="walker">${boy(105, 187, .8)}</g>`,
+  c2: () => `${earthBg()}<g class="launch"><g class="shake">${rocket(200, 235, .85)}</g></g>`,
+  c3: () => `${moonBg()}<g class="descend">${rocket(140, 222, .75)}</g><g class="moonboy">${boy(185, 170, .75)}</g>`,
+  c4: () => `${moonBg()}${boy(115, 172, .8)}<ellipse cx="265" cy="226" rx="48" ry="11" fill="#6c757d"/>
+    <g class="rise">${alien(265, 168, .85)}</g>
+    <path d="M200 224 Q265 242 330 224 L330 300 L200 300Z" fill="#adb5bd"/><path d="M217 226 Q265 240 313 226" stroke="#8d99ae" stroke-width="4" fill="none"/>`
+});
+
+/* ================= אפקטים: חלקיקים וצלילים ================= */
+const NS = 'http://www.w3.org/2000/svg';
+const R = (a, b) => a + Math.random() * (b - a);
+function el(tag, attrs, style) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (style) e.setAttribute('style', style);
+  return e;
+}
+const P = {
+  rain(g, delay) {
+    for (let i = 0; i < 55; i++) {
+      const x = R(-10, 410);
+      g.appendChild(el('line', { x1: x, y1: -14, x2: x - 3, y2: 2, stroke: '#e3f2fd', 'stroke-width': 2, 'stroke-linecap': 'round', opacity: .85 },
+        `animation:rainfall ${R(.5, .8).toFixed(2)}s linear ${(delay + R(0, 1)).toFixed(2)}s infinite`));
+    }
+  },
+  bubbles(g, x0, x1, y, n, delay) {
+    for (let i = 0; i < n; i++) {
+      g.appendChild(el('circle', { cx: R(x0, x1), cy: y + R(-10, 10), r: R(2, 6.5), fill: '#fff', 'fill-opacity': .25, stroke: '#fff', 'stroke-opacity': .8, 'stroke-width': 1.5, opacity: 0 },
+        `--dx:${R(-18, 18).toFixed(0)}px;animation:bubbleup ${R(2.5, 4.5).toFixed(2)}s ease-in ${(delay + R(0, 3)).toFixed(2)}s infinite`));
+    }
+  },
+  smoke(g, cx, cy, n, delay) {
+    for (let i = 0; i < n; i++) {
+      g.appendChild(el('circle', { class: 'pt', cx: cx + R(-10, 10), cy, r: R(9, 17), fill: '#e9ecef', opacity: 0 },
+        `--dx:${R(-70, 70).toFixed(0)}px;--dy:${R(5, 25).toFixed(0)}px;animation:puff ${R(1, 1.6).toFixed(2)}s ease-out ${(delay + R(0, 1.2)).toFixed(2)}s infinite`));
+    }
+  },
+  dust(g, cx, cy, delay) {
+    for (let i = 0; i < 16; i++) {
+      g.appendChild(el('circle', { class: 'pt', cx: cx + R(-15, 15), cy, r: R(6, 12), fill: '#ced4da', opacity: 0 },
+        `--dx:${R(-80, 80).toFixed(0)}px;--dy:${R(-25, -5).toFixed(0)}px;animation:puff ${R(.9, 1.4).toFixed(2)}s ease-out ${(delay + R(0, .2)).toFixed(2)}s 1`));
+    }
+  },
+  notes(g, x0, x1, y, delay) {
+    for (let i = 0; i < 10; i++) {
+      const t = el('text', { x: R(x0, x1), y, 'font-size': R(16, 26).toFixed(0), fill: '#fff', opacity: 0 },
+        `--dx:${R(-30, 30).toFixed(0)}px;animation:notes ${R(2.5, 3.5).toFixed(2)}s ease-out ${(delay + R(0, 3)).toFixed(2)}s infinite`);
+      t.textContent = i % 2 ? '♪' : '♫';
+      g.appendChild(t);
+    }
+  },
+  shoot(g, delay) {
+    for (let i = 0; i < 3; i++) {
+      g.appendChild(el('line', { x1: R(150, 400), y1: R(10, 90), x2: 0, y2: 0, stroke: '#fff', 'stroke-width': 2.5, 'stroke-linecap': 'round', opacity: 0 },
+        `animation:shoot 2.4s linear ${(delay + i * 1.3).toFixed(2)}s infinite`));
+      const l = g.lastChild; l.setAttribute('x2', +l.getAttribute('x1') + 34); l.setAttribute('y2', +l.getAttribute('y1') - 14);
+    }
+  }
+};
+const FX = {
+  a2: g => P.rain(g, 1.4),
+  s1: g => { P.bubbles(g, 210, 260, 135, 10, 0); P.bubbles(g, 20, 380, 250, 8, .5); },
+  s2: g => { P.bubbles(g, 240, 290, 140, 8, .3); P.bubbles(g, 20, 380, 250, 6, 0); },
+  s3: g => { P.bubbles(g, 20, 380, 250, 12, 0); },
+  s4: g => { P.bubbles(g, 20, 380, 250, 14, 0); P.notes(g, 60, 340, 200, .3); },
+  c2: g => P.smoke(g, 200, 236, 22, .2),
+  c3: g => P.dust(g, 140, 224, 1.5),
+  c4: g => P.shoot(g, .8)
+};
+
+let actx = null;
+function audio() {
+  try { if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume(); } catch (_) {}
+  return actx;
+}
+function tone(f1, f2, dur, delay = 0, type = 'sine', vol = .25) {
+  const ctx = audio(); if (!ctx) return;
+  const t = ctx.currentTime + delay, o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = type; o.frequency.setValueAtTime(f1, t); o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+  g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + .02); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + dur + .05);
+}
+function noise(dur, delay = 0, freq = 1000, vol = .2) {
+  const ctx = audio(); if (!ctx) return;
+  const t = ctx.currentTime + delay, len = Math.floor(ctx.sampleRate * dur);
+  const buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  const src = ctx.createBufferSource(), flt = ctx.createBiquadFilter(), g = ctx.createGain();
+  src.buffer = buf; flt.type = 'lowpass'; flt.frequency.value = freq;
+  g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + .3); g.gain.setValueAtTime(vol, t + dur - .5); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  src.connect(flt).connect(g).connect(ctx.destination); src.start(t); src.stop(t + dur);
+}
+const SFX = {
+  a1: () => tone(520, 160, .18, 1.4),
+  a2: () => noise(3.5, 1.3, 1400, .1),
+  a3: () => tone(300, 900, .5, 1.1, 'triangle', .12),
+  a4: () => { for (let i = 0; i < 8; i++) tone(700 + i * 60, 900 + i * 60, .12, .7 + i * .13, 'sine', .08); },
+  s1: () => { for (let i = 0; i < 4; i++) tone(350, 900, .12, i * .5, 'sine', .1); },
+  s3: () => tone(110, 70, 1.5, .3, 'sine', .25),
+  c1: () => tone(600, 300, .15, 2.4, 'square', .06),
+  c2: () => noise(4.5, .2, 280, .35),
+  c3: () => { noise(1.6, 0, 300, .2); tone(110, 50, .35, 1.6, 'sine', .4); },
+  c4: () => { tone(400, 1100, .3, .4, 'triangle', .12); tone(1100, 500, .3, .75, 'triangle', .1); }
+};
+function runEffects(scene) {
+  const g = stage.querySelector('.fx');
+  try { if (g && FX[scene]) FX[scene](g); } catch (_) {}
+  try { if (SFX[scene]) SFX[scene](); } catch (_) {}
+}
+
+const svgOf = (scene) => `<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice"><g class="scene ${scene}"><g class="cam">${SCENES[scene]()}<g class="fx"></g></g></g></svg>`;
 
 /* =========================================================
    3. השוואת מילים — מסלקת ניקוד ומאפשרת טעויות קטנות
    ========================================================= */
 const FINALS = { 'ך': 'כ', 'ם': 'מ', 'ן': 'נ', 'ף': 'פ', 'ץ': 'צ' };
+const DIGITS = { 1: 'אחת', 2: 'שתיים', 3: 'שלוש', 4: 'ארבע', 5: 'חמש', 6: 'שש', 7: 'שבע', 8: 'שמונה', 9: 'תשע', 10: 'עשר' };
 function norm(s) {
-  return s.replace(/[֑-ׇ]/g, '')          // ניקוד וטעמים
+  return s.replace(/\d+/g, d => ' ' + (DIGITS[+d] || '') + ' ')   // מספרים שהזיהוי כותב בספרות
+          .replace(/[֑-ׇ]/g, '')          // ניקוד וטעמים
           .replace(/[ךםןףץ]/g, c => FINALS[c])       // אותיות סופיות
           .replace(/[^א-ת\s]/g, ' ')        // סימני פיסוק
           .trim().split(/\s+/).filter(Boolean);
@@ -570,6 +1063,7 @@ function success() {
   stopListening();
   spans.forEach(s => { s.classList.add('ok'); s.classList.remove('next'); });
   stage.classList.add('alive');
+  runEffects(pages[page].scene);
   setStatus('כל הכבוד! 🎉');
   chime(); confetti();
   micBtn.disabled = true;
@@ -580,7 +1074,7 @@ function success() {
 }
 function chime() {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = audio(); if (!ctx) return;
     [523, 659, 784, 1047].forEach((f, i) => {
       const o = ctx.createOscillator(), g = ctx.createGain();
       o.frequency.value = f; o.type = 'triangle';
@@ -628,7 +1122,7 @@ function render() {
     stage.classList.add('alive');
     setStatus('');
     markFinished(book.id);
-    setTimeout(() => { chime(); confetti(); }, 300);
+    setTimeout(() => { chime(); confetti(); runEffects(pg.scene); }, 300);
     nx.disabled = false; nx.textContent = '↺'; nx.setAttribute('aria-label', 'לקרוא שוב');
     return;
   }
