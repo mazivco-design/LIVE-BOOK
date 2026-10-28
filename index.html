@@ -1229,6 +1229,7 @@ function openBook(b) {
   $('title').textContent = b.title;
   $('library').classList.add('hidden');
   $('reader').classList.remove('hidden');
+  autoListen = false;
   render();
 }
 
@@ -1389,13 +1390,21 @@ function sayWord(w) {
   speechSynthesis.cancel(); speechSynthesis.speak(u);
 }
 
-micBtn.onclick = () => listening ? stopListening() : startListening();
+let autoListen = false;   // ברגע שהילד הדליק את המיקרופון פעם אחת, ההקשבה ממשיכה לבד בכל דף
+micBtn.onclick = () => {
+  if (listening) { autoListen = false; stopListening(); }
+  else { autoListen = true; startListening(); }
+};
+function resumeListening() {
+  if (autoListen && !pages[page].end && !done) startListening();
+}
 $('next').onclick = () => {
   stopListening();
   if (pages[page].end) page = 0; else page++;
   render();
+  resumeListening();
 };
-$('prev').onclick = () => { stopListening(); if (page > 0) { page--; render(); } };
+$('prev').onclick = () => { stopListening(); if (page > 0) { page--; render(); resumeListening(); } };
 $('testPlay').onclick = () => {
   if (pages[page].end) return;
   if (done) { render(); setTimeout(success, 400); }   // להריץ שוב את האנימציה
